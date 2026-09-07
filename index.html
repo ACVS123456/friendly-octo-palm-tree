@@ -7,466 +7,2242 @@
 
 <style>
 *{box-sizing:border-box}
+
 :root{
-  --bg:#020b16;
-  --panel:#061626;
-  --panel2:#081d31;
-  --line:#087dff;
-  --text:#e8f5ff;
-  --muted:#83a6c2;
-  --green:#25e56a;
-  --yellow:#ffd21c;
-  --red:#ff304f;
-  --cyan:#00d9ff;
-  --off:#8b99a5;
+ --bg:#020b16;
+ --panel:#061626;
+ --text:#e8f5ff;
+ --muted:#7895aa;
+ --green:#25e56a;
+ --yellow:#ffd21c;
+ --red:#ff304f;
+ --cyan:#00d9ff;
+ --blue:#087dff;
 }
-html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 50% 20%,#0a2944 0,#03111f 38%,#010711 100%);color:var(--text)}
+
+html,body{
+ margin:0;
+ min-height:100%;
+ font-family:Arial,Helvetica,sans-serif;
+ background:
+ radial-gradient(circle at 50% 20%,#0a2944 0,#03111f 38%,#010711 100%);
+ color:var(--text);
+}
+
 button{font:inherit}
-.app{min-height:100vh;padding:10px}
+
+.app{
+ min-height:100vh;
+ padding:10px;
+}
+
+/* ================= HEADER ================= */
+
 .header{
-  height:62px;border:1px solid #075fae;background:#03101e;
-  display:flex;align-items:center;gap:12px;padding:0 14px;
-  box-shadow:0 0 20px #006dff22
+ height:62px;
+ border:1px solid #075fae;
+ background:#03101e;
+ display:flex;
+ align-items:center;
+ gap:12px;
+ padding:0 14px;
+ box-shadow:0 0 20px #006dff22;
 }
-.logo{font-size:30px;font-weight:900;color:#ffd21c;min-width:70px}
-.nav{display:flex;gap:6px;flex:1}
+
+.logo{
+ font-size:30px;
+ font-weight:900;
+ color:var(--yellow);
+ min-width:70px;
+}
+
+.nav{
+ display:flex;
+ gap:6px;
+ flex:1;
+}
+
 .nav button{
-  background:transparent;color:#d9edff;border:0;border-bottom:2px solid transparent;
-  padding:18px 18px;cursor:pointer;font-weight:bold
+ background:transparent;
+ color:#d9edff;
+ border:0;
+ border-bottom:2px solid transparent;
+ padding:18px;
+ cursor:pointer;
+ font-weight:bold;
 }
-.nav button.active{border-bottom-color:#1b91ff;color:white}
-.headerRight{display:flex;align-items:center;gap:12px;font-size:12px;text-align:right}
-.iconBtn{width:40px;height:40px;border-radius:50%;border:1px solid #258fff;background:#073b71;color:white;cursor:pointer}
-.alarmBtn{background:#721526;border-color:#ff304f}
-.main{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+
+.nav button.active{
+ border-bottom-color:#1b91ff;
+ color:white;
+}
+
+.headerRight{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ font-size:11px;
+ text-align:right;
+}
+
+.iconBtn{
+ width:40px;
+ height:40px;
+ border-radius:50%;
+ border:1px solid #258fff;
+ background:#073b71;
+ color:white;
+ cursor:pointer;
+}
+
+.alarmBtn{
+ background:#721526;
+ border-color:var(--red);
+}
+
+/* ================= SCADA ================= */
+
+.main{
+ display:grid;
+ gap:10px;
+ margin-top:10px;
+}
+
 .scada{
-  position:relative;min-height:700px;overflow:hidden;
-  border:1px solid #075fae;background:#020b16;
-  border-radius:4px
+ position:relative;
+ min-height:700px;
+ overflow:hidden;
+ border:1px solid #075fae;
+ background:#020b16;
+ border-radius:4px;
 }
+
 .gridBg{
-  position:absolute;inset:0;opacity:.22;
-  background-image:linear-gradient(#0b3557 1px,transparent 1px),linear-gradient(90deg,#0b3557 1px,transparent 1px);
-  background-size:35px 35px
+ position:absolute;
+ inset:0;
+ opacity:.22;
+ background-image:
+ linear-gradient(#0b3557 1px,transparent 1px),
+ linear-gradient(90deg,#0b3557 1px,transparent 1px);
+ background-size:35px 35px;
 }
-svg.pipeLayer{position:absolute;inset:0;width:100%;height:100%;z-index:1}
-.pipeBase{fill:none;stroke:#073d68;stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+
+/* ================= TUBULAÇÃO ================= */
+
+svg.pipeLayer{
+ position:absolute;
+ inset:0;
+ width:100%;
+ height:100%;
+ z-index:1;
+}
+
+.pipeBase{
+ fill:none;
+ stroke:#073d68;
+ stroke-width:11;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}
+
 .pipeFlow{
-  fill:none;stroke:#00a8ff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;
-  stroke-dasharray:16 13;animation:flow 1s linear infinite;filter:drop-shadow(0 0 6px #009dff)
+ fill:none;
+ stroke:#00baff;
+ stroke-width:6;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+ stroke-dasharray:18 14;
+ animation:flowAnimation .8s linear infinite;
+ filter:drop-shadow(0 0 7px #009dff);
 }
-.pipeFlow.off{stroke:#173a55;animation:none;filter:none}
-@keyframes flow{to{stroke-dashoffset:-58}}
-.zoneTitle{position:absolute;z-index:3;font-size:18px;font-weight:800;color:#dcefff;letter-spacing:.5px}
-.tank{left:2.5%;top:27%;z-index:4;position:absolute;width:105px;text-align:center}
+
+.pipeFlow.off{
+ stroke:#173a55;
+ animation:none;
+ filter:none;
+ opacity:.5;
+}
+
+.pipeFlow.slow{
+ animation-duration:1.8s;
+ opacity:.65;
+}
+
+@keyframes flowAnimation{
+ to{
+  stroke-dashoffset:-64;
+ }
+}
+
+/* ================= TANQUE ================= */
+
+.tank{
+ position:absolute;
+ left:2.5%;
+ top:27%;
+ width:105px;
+ text-align:center;
+ z-index:4;
+}
+
+.tankText{
+ font-size:13px;
+ font-weight:bold;
+ margin-bottom:6px;
+}
+
 .tankBody{
-  height:145px;border:2px solid #2089dd;border-radius:48% 48% 25% 25%;
-  background:linear-gradient(#0b4f89 0 45%,#0a91dc 46% 100%);
-  box-shadow:inset 0 0 25px #00b7ff88,0 0 15px #008cff44
+ height:145px;
+ border:2px solid #2089dd;
+ border-radius:48% 48% 25% 25%;
+ background:
+ linear-gradient(
+  #0b4f89 0 45%,
+  #0a91dc 46% 100%
+ );
+ box-shadow:
+ inset 0 0 25px #00b7ff88,
+ 0 0 15px #008cff44;
+ position:relative;
+ overflow:hidden;
 }
-.tankText{font-size:13px;font-weight:bold;margin-bottom:6px}
-.device{
-  position:absolute;z-index:5;width:250px;border:1px solid #007eff;border-radius:10px;
-  background:linear-gradient(145deg,#061a2b,#020a14);padding:9px;
-  box-shadow:0 0 13px #0088ff25
+
+.tankBody:after{
+ content:"";
+ position:absolute;
+ left:-20%;
+ width:140%;
+ height:3px;
+ top:45%;
+ background:#8be8ff;
+ box-shadow:0 0 8px #00d9ff;
+ animation:tankLevel 3s ease-in-out infinite;
 }
-.chiller{height:128px}
-.device h3{margin:0 0 5px;color:#dff2ff;font-size:16px}
-.deviceGrid{display:grid;grid-template-columns:70px 1fr;gap:3px;font-size:12px}
-.value{font-weight:800}
-.green{color:var(--green)}.yellow{color:var(--yellow)}.red{color:var(--red)}.muted{color:var(--muted)}
+
+@keyframes tankLevel{
+ 50%{top:42%}
+}
+
+/* ================= CHILLER ================= */
+
 .chillerBox{
-  position:absolute;left:28%;width:205px;height:100px;z-index:4;
-  border:2px solid #7f9db1;border-radius:8px;
-  background:linear-gradient(135deg,#d7dde0,#788894 45%,#dce3e6);
-  box-shadow:0 0 18px #00a8ff18
+ position:absolute;
+ left:28%;
+ width:205px;
+ height:100px;
+ z-index:4;
+ border:2px solid #7f9db1;
+ border-radius:8px;
+ background:
+ linear-gradient(135deg,#d7dde0,#788894 45%,#dce3e6);
+ box-shadow:0 0 18px #00a8ff18;
+ transition:.3s;
 }
-.chillerBox:before,.chillerBox:after{
-  content:"";position:absolute;top:-13px;width:33px;height:10px;border-radius:3px;background:#aeb8bd;border:1px solid #52626d
+
+.chillerBox.running{
+ box-shadow:
+ 0 0 20px #00a8ff66,
+ 0 0 35px #00a8ff22;
 }
-.chillerBox:before{left:34px;box-shadow:48px 0 #aeb8bd,96px 0 #aeb8bd}
-.chillerBox:after{right:20px;opacity:.9}
-.fan{position:absolute;width:27px;height:27px;border:2px solid #41535d;border-radius:50%;left:82px;top:34px}
-.fan:before,.fan:after{content:"";position:absolute;left:11px;top:2px;width:4px;height:19px;background:#52626d;border-radius:50%;transform:rotate(25deg)}
-.fan:after{transform:rotate(115deg)}
+
+.chillerBox.alarm{
+ border-color:var(--red);
+ box-shadow:0 0 20px #ff304f88;
+}
+
+.chillerBox:before,
+.chillerBox:after{
+ content:"";
+ position:absolute;
+ top:-13px;
+ width:33px;
+ height:10px;
+ border-radius:3px;
+ background:#aeb8bd;
+ border:1px solid #52626d;
+}
+
+.chillerBox:before{
+ left:34px;
+ box-shadow:
+ 48px 0 #aeb8bd,
+ 96px 0 #aeb8bd;
+}
+
+.chillerBox:after{
+ right:20px;
+}
+
+.fan{
+ position:absolute;
+ width:27px;
+ height:27px;
+ border:2px solid #41535d;
+ border-radius:50%;
+ left:82px;
+ top:34px;
+}
+
+.fan:before,
+.fan:after{
+ content:"";
+ position:absolute;
+ left:11px;
+ top:2px;
+ width:4px;
+ height:19px;
+ background:#52626d;
+ border-radius:50%;
+ transform:rotate(25deg);
+}
+
+.fan:after{
+ transform:rotate(115deg);
+}
+
+.chillerBox.running .fan{
+ animation:fanSpin .55s linear infinite;
+}
+
+@keyframes fanSpin{
+ to{transform:rotate(360deg)}
+}
+
+/* ================= CARDS ================= */
+
+.device{
+ position:absolute;
+ z-index:5;
+ width:250px;
+ border:1px solid #007eff;
+ border-radius:10px;
+ background:linear-gradient(145deg,#061a2b,#020a14);
+ padding:9px;
+ box-shadow:0 0 13px #0088ff25;
+ transition:.25s;
+}
+
+.device.running{
+ border-color:#25e56a;
+ box-shadow:0 0 16px #25e56a22;
+}
+
+.device.alarm{
+ border-color:var(--red);
+ box-shadow:0 0 18px #ff304f44;
+}
+
+.chiller{
+ height:128px;
+}
+
+.device h3{
+ margin:0 0 6px;
+ color:#dff2ff;
+ font-size:16px;
+}
+
+.deviceGrid{
+ display:grid;
+ grid-template-columns:70px 1fr;
+ gap:4px;
+ font-size:12px;
+}
+
+.value{
+ font-weight:800;
+}
+
+.green{color:var(--green)}
+.yellow{color:var(--yellow)}
+.red{color:var(--red)}
+.muted{color:var(--muted)}
+
+/* ================= BOMBAS ================= */
+
 .pump{
-  position:absolute;z-index:6;width:90px;height:48px;
-  display:flex;align-items:center;gap:5px
+ position:absolute;
+ z-index:6;
+ width:90px;
+ height:48px;
+ display:flex;
+ align-items:center;
+ gap:5px;
 }
-.motor{width:26px;height:34px;border-radius:4px;background:#adb8bd;border:2px solid #4d626d}
+
+.motor{
+ width:26px;
+ height:34px;
+ border-radius:4px;
+ background:#adb8bd;
+ border:2px solid #4d626d;
+}
+
 .pumpWheel{
-  width:38px;height:38px;border-radius:50%;border:4px solid #3bd8ff;
-  background:#073d5c;position:relative;box-shadow:0 0 12px #00b7ff66
+ width:38px;
+ height:38px;
+ border-radius:50%;
+ border:4px solid #3bd8ff;
+ background:#073d5c;
+ position:relative;
+ box-shadow:0 0 12px #00b7ff66;
 }
-.pumpWheel:before{content:"";position:absolute;inset:7px;border-radius:50%;border:3px dotted #b9efff}
-.pump.on .pumpWheel{animation:spin .65s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.pump.off .pumpWheel{filter:grayscale(1);opacity:.55}
-.pumpLabel{position:absolute;top:43px;left:0;font-size:12px;font-weight:bold;color:#b9dcf2}
+
+.pumpWheel:before{
+ content:"";
+ position:absolute;
+ inset:7px;
+ border-radius:50%;
+ border:3px dotted #b9efff;
+}
+
+.pump.on .pumpWheel{
+ animation:spin .55s linear infinite;
+}
+
+.pump.off .pumpWheel{
+ filter:grayscale(1);
+ opacity:.45;
+}
+
+.pump.alarm .pumpWheel{
+ border-color:var(--red);
+ box-shadow:0 0 15px var(--red);
+}
+
+@keyframes spin{
+ to{transform:rotate(360deg)}
+}
+
+.pumpLabel{
+ position:absolute;
+ top:43px;
+ left:0;
+ font-size:12px;
+ font-weight:bold;
+ color:#b9dcf2;
+}
+
+/* ================= CONTROLE ================= */
+
 .controls{
-  position:absolute;z-index:10;right:12px;top:12px;width:235px;
-  border:1px solid #087dff;background:#041526ee;border-radius:10px;padding:10px;
-  backdrop-filter:blur(4px)
+ position:absolute;
+ z-index:10;
+ right:12px;
+ top:12px;
+ width:245px;
+ border:1px solid #087dff;
+ background:#041526ee;
+ border-radius:10px;
+ padding:10px;
+ backdrop-filter:blur(5px);
 }
-.controls h2{font-size:16px;margin:0 0 8px}
-.controlRow{display:flex;gap:5px;margin:5px 0}
+
+.controls h2{
+ font-size:16px;
+ margin:0 0 8px;
+}
+
+.controlRow{
+ display:flex;
+ gap:5px;
+ margin:5px 0;
+}
+
 .smallBtn{
-  flex:1;padding:7px;border-radius:6px;border:1px solid #1a73b8;background:#082943;color:#dff4ff;cursor:pointer
+ flex:1;
+ padding:7px 5px;
+ border-radius:6px;
+ border:1px solid #1a73b8;
+ background:#082943;
+ color:#dff4ff;
+ cursor:pointer;
+ font-size:11px;
+ font-weight:bold;
 }
-.smallBtn:hover{background:#0d3c61}
-.smallBtn.selected{background:#075fae;border-color:#3cb8ff}
+
+.smallBtn:hover{
+ background:#0d3c61;
+}
+
+.smallBtn.selected{
+ background:#075fae;
+ border-color:#3cb8ff;
+ box-shadow:0 0 8px #008cff44;
+}
+
+/* ================= INFO CENTRAL ================= */
+
+.centralInfo{
+ position:absolute;
+ z-index:7;
+ left:67%;
+ top:55%;
+ font-size:13px;
+ line-height:1.8;
+ background:#03111fcc;
+ border:1px solid #0a4c77;
+ border-radius:6px;
+ padding:8px 12px;
+}
+
+/* ================= SUMMARY ================= */
+
 .summary{
-  display:grid;grid-template-columns:repeat(6,1fr);gap:0;
-  border:1px solid #075fae;background:#03111f;padding:12px;margin-top:10px
+ display:grid;
+ grid-template-columns:repeat(6,1fr);
+ gap:0;
+ border:1px solid #075fae;
+ background:#03111f;
+ padding:12px;
 }
-.sumItem{min-height:72px;padding:7px 12px;border-right:1px solid #164566}
-.sumItem:last-child{border-right:0}
-.sumTitle{color:#a8c6dc;font-size:12px}.sumValue{font-size:22px;font-weight:900;margin-top:8px}
-.statusDot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--off);margin-right:6px;box-shadow:0 0 8px #000}
-.statusDot.on{background:var(--green);box-shadow:0 0 12px var(--green)}
-.statusDot.warn{background:var(--yellow);box-shadow:0 0 12px var(--yellow)}
-.statusDot.alarm{background:var(--red);box-shadow:0 0 12px var(--red);animation:blink .7s infinite}
-@keyframes blink{50%{opacity:.25}}
-.bottom{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-top:10px}
-.card{border:1px solid #075fae;background:#03111f;padding:12px;border-radius:5px}
-.card h3{margin:0 0 12px;font-size:14px;color:#dff2ff}
-.legendRow{display:flex;gap:20px;align-items:center;font-size:12px}
-.alarmPanel{min-height:115px}
-.alarmList{font-size:12px;line-height:1.7}
-.alarmNone{color:var(--green)}
+
+.sumItem{
+ min-height:72px;
+ padding:7px 12px;
+ border-right:1px solid #164566;
+}
+
+.sumItem:last-child{
+ border-right:0;
+}
+
+.sumTitle{
+ color:#a8c6dc;
+ font-size:12px;
+}
+
+.sumValue{
+ font-size:22px;
+ font-weight:900;
+ margin-top:8px;
+}
+
+/* ================= STATUS ================= */
+
+.statusDot{
+ display:inline-block;
+ width:12px;
+ height:12px;
+ border-radius:50%;
+ background:#687681;
+ margin-right:6px;
+ box-shadow:0 0 8px #000;
+}
+
+.statusDot.on{
+ background:var(--green);
+ box-shadow:0 0 12px var(--green);
+}
+
+.statusDot.warn{
+ background:var(--yellow);
+ box-shadow:0 0 12px var(--yellow);
+}
+
+.statusDot.alarm{
+ background:var(--red);
+ box-shadow:0 0 12px var(--red);
+ animation:blink .7s infinite;
+}
+
+@keyframes blink{
+ 50%{opacity:.25}
+}
+
+/* ================= BOTTOM ================= */
+
+.bottom{
+ display:grid;
+ grid-template-columns:2fr 1fr 1fr;
+ gap:10px;
+}
+
+.card{
+ border:1px solid #075fae;
+ background:#03111f;
+ padding:12px;
+ border-radius:5px;
+}
+
+.card h3{
+ margin:0 0 12px;
+ font-size:14px;
+ color:#dff2ff;
+}
+
+.legendRow{
+ display:flex;
+ gap:20px;
+ align-items:center;
+ font-size:12px;
+ margin-bottom:8px;
+}
+
+.alarmList{
+ font-size:12px;
+ line-height:1.7;
+}
+
+.alarmNone{
+ color:var(--green);
+}
+
 .log{
-  max-height:140px;overflow:auto;font-family:monospace;font-size:11px;color:#9fc6df;
-  background:#010811;border:1px solid #0a2e4b;padding:7px
+ max-height:140px;
+ overflow:auto;
+ font-family:monospace;
+ font-size:11px;
+ color:#9fc6df;
+ background:#010811;
+ border:1px solid #0a2e4b;
+ padding:7px;
 }
-.badge{display:inline-block;padding:2px 7px;border-radius:10px;background:#0b3655;font-size:10px}
-.flash{animation:blink .8s infinite}
+
+/* ================= RESPONSIVO ================= */
+
 @media(max-width:1100px){
-  .summary{grid-template-columns:repeat(3,1fr)}
-  .bottom{grid-template-columns:1fr}
+ .summary{
+  grid-template-columns:repeat(3,1fr);
+ }
+
+ .bottom{
+  grid-template-columns:1fr;
+ }
+
+ .scada{
+  min-height:850px;
+ }
 }
+
 @media(max-width:760px){
-  .nav button{padding:10px 7px;font-size:11px}.headerRight{display:none}
-  .scada{min-height:1000px}
-  .controls{position:relative;right:auto;top:auto;margin:10px;width:auto}
-  .device{width:220px}.chillerBox{left:25%;width:180px}
+
+ .header{
+  height:auto;
+  min-height:60px;
+ }
+
+ .nav button{
+  padding:10px 7px;
+  font-size:11px;
+ }
+
+ .headerRight{
+  display:none;
+ }
+
+ .scada{
+  min-height:1000px;
+ }
+
+ .controls{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:220px;
+ }
+
+ .device{
+  width:215px;
+ }
+
+ .chillerBox{
+  left:25%;
+  width:180px;
+ }
+
+ .centralInfo{
+  left:55%;
+  top:75%;
+ }
 }
 </style>
 </head>
 
 <body>
+
 <div class="app">
+
 <header class="header">
-  <div class="logo">CAG</div>
-  <nav class="nav">
-    <button>PARAÍBA</button>
-    <button>JPA-TR</button>
-    <button class="active">CAG</button>
-  </nav>
-  <div class="headerRight">
-    <button class="iconBtn" onclick="showManual()">📋</button>
-    <span>CONSULTAR MANUAL<br>DE OPERAÇÃO</span>
-    <button class="iconBtn" onclick="toggleAutoAlarm()">NET</button>
-    <button class="iconBtn alarmBtn" onclick="clearAlarms()">🔔</button>
-  </div>
+
+ <div class="logo">CAG</div>
+
+ <nav class="nav">
+  <button>PARAÍBA</button>
+  <button>JPA-TR</button>
+  <button class="active">CAG</button>
+ </nav>
+
+ <div class="headerRight">
+
+  <button class="iconBtn" onclick="showManual()">📋</button>
+
+  <span>
+   CONSULTAR MANUAL<br>
+   DE OPERAÇÃO
+  </span>
+
+  <button class="iconBtn" onclick="testNet()">NET</button>
+
+  <button class="iconBtn alarmBtn" onclick="ackAlarms()">🔔</button>
+
+ </div>
+
 </header>
 
 <main class="main">
-<section class="scada" id="scada">
-  <div class="gridBg"></div>
-  <div class="zoneTitle" style="left:76%;top:9%">SECUNDÁRIO</div>
 
-  <svg class="pipeLayer" viewBox="0 0 1200 700" preserveAspectRatio="none">
-    <!-- Primário -->
-    <path class="pipeBase" d="M125 365 H205 V135 H930 V405 H1050"/>
-    <path id="flowPrimary" class="pipeFlow" d="M125 365 H205 V135 H930 V405 H1050"/>
-    <path class="pipeBase" d="M205 135 V250"/>
-    <path id="flowP2" class="pipeFlow" d="M205 135 V250"/>
-    <path class="pipeBase" d="M205 250 V365"/>
-    <path id="flowP3" class="pipeFlow" d="M205 250 V365"/>
-    <path class="pipeBase" d="M205 365 V480"/>
-    <path id="flowP4" class="pipeFlow" d="M205 365 V480"/>
-    <path class="pipeBase" d="M205 480 V610 H930 V405"/>
-    <path id="flowReturn" class="pipeFlow" d="M205 480 V610 H930 V405"/>
-    <!-- Secundário -->
-    <path class="pipeBase" d="M930 405 H1070 V225 H1160"/>
-    <path id="flowSecondary" class="pipeFlow" d="M930 405 H1070 V225 H1160"/>
-    <path class="pipeBase" d="M1070 225 V330"/>
-    <path id="flowS2" class="pipeFlow" d="M1070 225 V330"/>
-    <path class="pipeBase" d="M1070 330 V435"/>
-    <path id="flowS3" class="pipeFlow" d="M1070 330 V435"/>
-    <path class="pipeBase" d="M1070 435 V540 H1160"/>
-    <path id="flowS4" class="pipeFlow" d="M1070 435 V540 H1160"/>
-  </svg>
+<section class="scada">
 
-  <div class="tank">
-    <div class="tankText">Tanque de Expansão</div>
-    <div class="tankBody"></div>
+ <div class="gridBg"></div>
+
+ <div class="zoneTitle"
+      style="left:76%;top:9%">
+  SECUNDÁRIO
+ </div>
+
+ <!-- ================= TUBULAÇÕES ================= -->
+
+ <svg class="pipeLayer"
+      viewBox="0 0 1200 700"
+      preserveAspectRatio="none">
+
+  <!-- alimentação primária -->
+
+  <path class="pipeBase"
+        d="M125 365 H205 V135 H930"/>
+
+  <path id="flowPrimary"
+        class="pipeFlow"
+        d="M125 365 H205 V135 H930"/>
+
+  <!-- ramais dos chillers -->
+
+  <path class="pipeBase"
+        d="M205 135 V250"/>
+
+  <path id="flowP1"
+        class="pipeFlow"
+        d="M205 135 V250"/>
+
+  <path class="pipeBase"
+        d="M205 250 V365"/>
+
+  <path id="flowP2"
+        class="pipeFlow"
+        d="M205 250 V365"/>
+
+  <path class="pipeBase"
+        d="M205 365 V480"/>
+
+  <path id="flowP3"
+        class="pipeFlow"
+        d="M205 365 V480"/>
+
+  <path class="pipeBase"
+        d="M205 480 V610 H930"/>
+
+  <path id="flowReturn"
+        class="pipeFlow"
+        d="M205 480 V610 H930"/>
+
+  <!-- retorno para circuito -->
+
+  <path class="pipeBase"
+        d="M930 610 V405"/>
+
+  <path id="flowReturnUp"
+        class="pipeFlow"
+        d="M930 610 V405"/>
+
+  <!-- secundário -->
+
+  <path class="pipeBase"
+        d="M930 405 H1070 V225 H1160"/>
+
+  <path id="flowSecondary"
+        class="pipeFlow"
+        d="M930 405 H1070 V225 H1160"/>
+
+  <path class="pipeBase"
+        d="M1070 225 V330"/>
+
+  <path id="flowS1"
+        class="pipeFlow"
+        d="M1070 225 V330"/>
+
+  <path class="pipeBase"
+        d="M1070 330 V435"/>
+
+  <path id="flowS2"
+        class="pipeFlow"
+        d="M1070 330 V435"/>
+
+  <path class="pipeBase"
+        d="M1070 435 V540 H1160"/>
+
+  <path id="flowS3"
+        class="pipeFlow"
+        d="M1070 435 V540 H1160"/>
+
+ </svg>
+
+ <!-- ================= TANQUE ================= -->
+
+ <div class="tank">
+
+  <div class="tankText">
+   Tanque de Expansão
   </div>
 
-  <!-- CHILLERS -->
-  <div class="chillerBox" style="top:10%;"><div class="fan"></div></div>
-  <div class="chillerBox" style="top:27%;"><div class="fan"></div></div>
-  <div class="chillerBox" style="top:44%;"><div class="fan"></div></div>
-  <div class="chillerBox" style="top:61%;"><div class="fan"></div></div>
+  <div class="tankBody"></div>
 
-  <div class="device chiller" style="left:47%;top:9%" id="chillerCard1">
-    <h3>Chiller 01</h3><div class="deviceGrid">
-      <span>Cmd:</span><span id="c1cmd" class="value yellow">Desliga</span>
-      <span>Status:</span><span id="c1status" class="value muted">Desligado</span>
-      <span>Horas:</span><span id="c1hours" class="value yellow">452</span>
-      <span>Saída:</span><span id="c1temp" class="value">5,4 °C</span>
-    </div>
+ </div>
+
+ <!-- ================= CHILLER FÍSICO ================= -->
+
+ <div class="chillerBox" id="box1" style="top:10%">
+  <div class="fan"></div>
+ </div>
+
+ <div class="chillerBox" id="box2" style="top:27%">
+  <div class="fan"></div>
+ </div>
+
+ <div class="chillerBox" id="box3" style="top:44%">
+  <div class="fan"></div>
+ </div>
+
+ <div class="chillerBox" id="box4" style="top:61%">
+  <div class="fan"></div>
+ </div>
+
+ <!-- ================= CARDS CHILLERS ================= -->
+
+ <div class="device chiller"
+      id="chillerCard1"
+      style="left:47%;top:9%">
+
+  <h3>Chiller 01</h3>
+
+  <div class="deviceGrid">
+
+   <span>Cmd:</span>
+   <span id="c1cmd" class="value yellow">
+    Desliga
+   </span>
+
+   <span>Status:</span>
+   <span id="c1status" class="value muted">
+    Desligado
+   </span>
+
+   <span>Horas:</span>
+   <span id="c1hours" class="value yellow">
+    452
+   </span>
+
+   <span>Saída:</span>
+   <span id="c1temp" class="value">
+    5,4 °C
+   </span>
+
   </div>
-  <div class="device chiller" style="left:47%;top:26%" id="chillerCard2">
-    <h3>Chiller 02</h3><div class="deviceGrid">
-      <span>Cmd:</span><span id="c2cmd" class="value green">Liga</span>
-      <span>Status:</span><span id="c2status" class="value green">Ligado</span>
-      <span>Horas:</span><span id="c2hours" class="value yellow">51303</span>
-      <span>Saída:</span><span id="c2temp" class="value">5,4 °C</span>
-    </div>
+ </div>
+
+
+ <div class="device chiller"
+      id="chillerCard2"
+      style="left:47%;top:26%">
+
+  <h3>Chiller 02</h3>
+
+  <div class="deviceGrid">
+
+   <span>Cmd:</span>
+   <span id="c2cmd" class="value green">
+    Liga
+   </span>
+
+   <span>Status:</span>
+   <span id="c2status" class="value green">
+    Ligado
+   </span>
+
+   <span>Horas:</span>
+   <span id="c2hours" class="value yellow">
+    51303
+   </span>
+
+   <span>Saída:</span>
+   <span id="c2temp" class="value">
+    5,4 °C
+   </span>
+
   </div>
-  <div class="device chiller" style="left:47%;top:43%" id="chillerCard3">
-    <h3>Chiller 03</h3><div class="deviceGrid">
-      <span>Cmd:</span><span id="c3cmd" class="value green">Liga</span>
-      <span>Status:</span><span id="c3status" class="value green">Ligado</span>
-      <span>Horas:</span><span id="c3hours" class="value yellow">35801</span>
-      <span>Saída:</span><span id="c3temp" class="value">5,4 °C</span>
-    </div>
+ </div>
+
+
+ <div class="device chiller"
+      id="chillerCard3"
+      style="left:47%;top:43%">
+
+  <h3>Chiller 03</h3>
+
+  <div class="deviceGrid">
+
+   <span>Cmd:</span>
+   <span id="c3cmd" class="value green">
+    Liga
+   </span>
+
+   <span>Status:</span>
+   <span id="c3status" class="value green">
+    Ligado
+   </span>
+
+   <span>Horas:</span>
+   <span id="c3hours" class="value yellow">
+    35801
+   </span>
+
+   <span>Saída:</span>
+   <span id="c3temp" class="value">
+    5,4 °C
+   </span>
+
   </div>
-  <div class="device chiller" style="left:47%;top:60%" id="chillerCard4">
-    <h3>Chiller 04</h3><div class="deviceGrid">
-      <span>Cmd:</span><span id="c4cmd" class="value yellow">Desliga</span>
-      <span>Status:</span><span id="c4status" class="value muted">Desligado</span>
-      <span>Horas:</span><span id="c4hours" class="value yellow">0</span>
-      <span>Saída:</span><span id="c4temp" class="value">5,4 °C</span>
-    </div>
+ </div>
+
+
+ <div class="device chiller"
+      id="chillerCard4"
+      style="left:47%;top:60%">
+
+  <h3>Chiller 04</h3>
+
+  <div class="deviceGrid">
+
+   <span>Cmd:</span>
+   <span id="c4cmd" class="value yellow">
+    Desliga
+   </span>
+
+   <span>Status:</span>
+   <span id="c4status" class="value muted">
+    Desligado
+   </span>
+
+   <span>Horas:</span>
+   <span id="c4hours" class="value yellow">
+    0
+   </span>
+
+   <span>Saída:</span>
+   <span id="c4temp" class="value">
+    5,4 °C
+   </span>
+
+  </div>
+ </div>
+
+
+ <!-- ================= BOMBAS PRIMÁRIAS ================= -->
+
+ <div class="pump on"
+      id="p1"
+      style="left:18%;top:13%">
+  <div class="motor"></div>
+  <div class="pumpWheel"></div>
+  <div class="pumpLabel">BAGP01</div>
+ </div>
+
+ <div class="pump on"
+      id="p2"
+      style="left:18%;top:30%">
+  <div class="motor"></div>
+  <div class="pumpWheel"></div>
+  <div class="pumpLabel">BAGP02</div>
+ </div>
+
+ <div class="pump on"
+      id="p3"
+      style="left:18%;top:47%">
+  <div class="motor"></div>
+  <div class="pumpWheel"></div>
+  <div class="pumpLabel">BAGP03</div>
+ </div>
+
+ <div class="pump off"
+      id="p4"
+      style="left:18%;top:64%">
+  <div class="motor"></div>
+  <div class="pumpWheel"></div>
+  <div class="pumpLabel">BAGP04</div>
+ </div>
+
+
+ <!-- ================= BOMBAS SECUNDÁRIAS ================= -->
+
+ <div class="pump on"
+      id="s1"
+      style="left:85%;top:22%">
+  <div class="motor"></div>
+  <div class="pumpWheel"></div>
+  <div class="pumpLabel">BAGSS01</div>
+ </div>
+
+ <div class="pump on"
+      id="s2"
+      style="left:85%;top:37%">
+  <div class="motor"></div>
+  <div class="pumpWheel"></div>
+  <div class="pumpLabel">BAGSS02</div>
+ </div>
+
+ <div class="pump off"
+      id="s3"
+      style="left:85%;top:52%">
+  <div class="motor"></div>
+  <div class="pumpWheel"></div>
+  <div class="pumpLabel">BAGSS03</div>
+ </div>
+
+ <div class="pump on"
+      id="s4"
+      style="left:85%;top:67%">
+  <div class="motor"></div>
+  <div class="pumpWheel"></div>
+  <div class="pumpLabel">BAGSS04</div>
+ </div>
+
+
+ <!-- ================= INFORMAÇÕES ================= -->
+
+ <div class="centralInfo">
+
+  <b>Temperatura:</b>
+  <span id="tempBig" class="yellow">
+   5,4 °C
+  </span>
+
+  <br>
+
+  <b>Fluxo:</b>
+  <span id="flowBig" class="green">
+   ON
+  </span>
+
+  <br>
+
+  <b>Vazão:</b>
+  <span id="flowRate" class="yellow">
+   0,00 m³/h
+  </span>
+
+  <br>
+
+  <b>Pressão:</b>
+  <span id="pressureBig" class="yellow">
+   3,50 bar
+  </span>
+
+ </div>
+
+
+ <!-- ================= CONTROLE ================= -->
+
+ <aside class="controls">
+
+  <h2>🎛 CONTROLE DO SIMULADOR</h2>
+
+  <div class="controlRow">
+
+   <button class="smallBtn"
+           onclick="setAllChillers(true)">
+    LIGAR TODOS
+   </button>
+
+   <button class="smallBtn"
+           onclick="setAllChillers(false)">
+    DESLIGAR
+   </button>
+
   </div>
 
-  <!-- PRIMÁRIAS -->
-  <div class="pump on" style="left:18%;top:13%" id="p1"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGP01</div></div>
-  <div class="pump on" style="left:18%;top:30%" id="p2"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGP02</div></div>
-  <div class="pump on" style="left:18%;top:47%" id="p3"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGP03</div></div>
-  <div class="pump off" style="left:18%;top:64%" id="p4"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGP04</div></div>
+  <div class="controlRow">
 
-  <!-- SECUNDÁRIAS -->
-  <div class="pump on" style="left:85%;top:22%" id="s1"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGSS01</div></div>
-  <div class="pump on" style="left:85%;top:37%" id="s2"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGSS02</div></div>
-  <div class="pump off" style="left:85%;top:52%" id="s3"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGSS03</div></div>
-  <div class="pump on" style="left:85%;top:67%" id="s4"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGSS04</div></div>
+   <button id="autoBtn"
+           class="smallBtn selected"
+           onclick="setAuto(true)">
+    AUTOMÁTICO
+   </button>
 
-  <div style="position:absolute;z-index:6;left:67%;top:55%;font-size:13px">
-    <b>Temperatura:</b> <span id="tempBig" class="yellow">5,4 °C</span><br>
-    <b>Fluxo:</b> <span id="flowBig" class="green">ON</span><br>
-    <b>Vazão:</b> <span id="flowRate" class="yellow">0,2 m³/h</span>
+   <button id="manualBtn"
+           class="smallBtn"
+           onclick="setAuto(false)">
+    MANUAL
+   </button>
+
   </div>
 
-  <!-- CONTROLES -->
-  <aside class="controls">
-    <h2>🎛 CONTROLE DO SIMULADOR</h2>
-    <div class="controlRow">
-      <button class="smallBtn" onclick="setAllChillers(true)">LIGAR TODOS</button>
-      <button class="smallBtn" onclick="setAllChillers(false)">DESLIGAR</button>
-    </div>
-    <div class="controlRow">
-      <button class="smallBtn" onclick="setAuto(true)" id="autoBtn">AUTOMÁTICO</button>
-      <button class="smallBtn" onclick="setAuto(false)" id="manualBtn">MANUAL</button>
-    </div>
-    <div class="controlRow">
-      <button class="smallBtn" onclick="toggleChiller(1)">C01</button>
-      <button class="smallBtn" onclick="toggleChiller(2)">C02</button>
-      <button class="smallBtn" onclick="toggleChiller(3)">C03</button>
-      <button class="smallBtn" onclick="toggleChiller(4)">C04</button>
-    </div>
-    <div class="controlRow">
-      <button class="smallBtn" onclick="toggleSecondary(1)">S01</button>
-      <button class="smallBtn" onclick="toggleSecondary(2)">S02</button>
-      <button class="smallBtn" onclick="toggleSecondary(3)">S03</button>
-      <button class="smallBtn" onclick="toggleSecondary(4)">S04</button>
-    </div>
-    <div style="margin-top:8px;font-size:11px;color:#86a9c2">
-      Modo atual: <b id="modeLabel" class="green">AUTOMÁTICO</b><br>
-      Falhas simuladas: <b id="alarmCount" class="green">0</b>
-    </div>
-  </aside>
+  <div class="controlRow">
+
+   <button class="smallBtn" onclick="toggleChiller(1)">C01</button>
+   <button class="smallBtn" onclick="toggleChiller(2)">C02</button>
+   <button class="smallBtn" onclick="toggleChiller(3)">C03</button>
+   <button class="smallBtn" onclick="toggleChiller(4)">C04</button>
+
+  </div>
+
+  <div class="controlRow">
+
+   <button class="smallBtn" onclick="toggleSecondary(1)">S01</button>
+   <button class="smallBtn" onclick="toggleSecondary(2)">S02</button>
+   <button class="smallBtn" onclick="toggleSecondary(3)">S03</button>
+   <button class="smallBtn" onclick="toggleSecondary(4)">S04</button>
+
+  </div>
+
+  <div style="margin-top:8px;font-size:11px;color:#86a9c2">
+
+   Modo atual:
+   <b id="modeLabel" class="green">
+    AUTOMÁTICO
+   </b>
+
+   <br>
+
+   Falhas simuladas:
+   <b id="alarmCount" class="green">
+    0
+   </b>
+
+  </div>
+
+ </aside>
+
 </section>
+
+
+<!-- ================= RESUMO ================= -->
 
 <section class="summary">
-  <div class="sumItem"><div class="sumTitle">CHILLERS LIGADOS</div><div class="sumValue" id="sumChillers">2 / 4</div></div>
-  <div class="sumItem"><div class="sumTitle">BOMBAS PRIMÁRIAS</div><div class="sumValue" id="sumPrimary">2 / 4</div></div>
-  <div class="sumItem"><div class="sumTitle">BOMBAS SECUNDÁRIAS</div><div class="sumValue" id="sumSecondary">3 / 4</div></div>
-  <div class="sumItem"><div class="sumTitle">TEMPERATURA DE SAÍDA</div><div class="sumValue" id="sumTemp">5,4 °C</div></div>
-  <div class="sumItem"><div class="sumTitle">VAZÃO</div><div class="sumValue" id="sumFlow">0,2 m³/h</div></div>
-  <div class="sumItem"><div class="sumTitle">PRESSÃO</div><div class="sumValue" id="sumPressure">3,5 bar</div></div>
+
+ <div class="sumItem">
+  <div class="sumTitle">CHILLERS LIGADOS</div>
+  <div class="sumValue" id="sumChillers">2 / 4</div>
+ </div>
+
+ <div class="sumItem">
+  <div class="sumTitle">BOMBAS PRIMÁRIAS</div>
+  <div class="sumValue" id="sumPrimary">2 / 4</div>
+ </div>
+
+ <div class="sumItem">
+  <div class="sumTitle">BOMBAS SECUNDÁRIAS</div>
+  <div class="sumValue" id="sumSecondary">3 / 4</div>
+ </div>
+
+ <div class="sumItem">
+  <div class="sumTitle">TEMPERATURA DE SAÍDA</div>
+  <div class="sumValue" id="sumTemp">5,4 °C</div>
+ </div>
+
+ <div class="sumItem">
+  <div class="sumTitle">VAZÃO</div>
+  <div class="sumValue" id="sumFlow">0,00 m³/h</div>
+ </div>
+
+ <div class="sumItem">
+  <div class="sumTitle">PRESSÃO</div>
+  <div class="sumValue" id="sumPressure">3,50 bar</div>
+ </div>
+
 </section>
 
+
+<!-- ================= PARTE INFERIOR ================= -->
+
 <section class="bottom">
-  <div class="card alarmPanel">
-    <h3>EVENTOS / ALARMES</h3>
-    <div id="alarmList" class="alarmList"><span class="alarmNone">● Sistema normal — nenhum alarme ativo.</span></div>
+
+ <div class="card">
+
+  <h3>EVENTOS / ALARMES</h3>
+
+  <div id="alarmList"
+       class="alarmList">
+
+   <span class="alarmNone">
+    ● Sistema normal — nenhum alarme ativo.
+   </span>
+
   </div>
-  <div class="card">
-    <h3>LEGENDA</h3>
-    <div class="legendRow"><span><i class="statusDot on"></i>Ligado</span><span><i class="statusDot"></i>Desligado</span></div>
-    <div class="legendRow" style="margin-top:12px"><span><i class="statusDot warn"></i>Atenção</span><span><i class="statusDot alarm"></i>Falha</span></div>
+
+ </div>
+
+
+ <div class="card">
+
+  <h3>LEGENDA</h3>
+
+  <div class="legendRow">
+   <span>
+    <i class="statusDot on"></i>
+    Ligado
+   </span>
+
+   <span>
+    <i class="statusDot"></i>
+    Desligado
+   </span>
   </div>
-  <div class="card">
-    <h3>REGISTRO</h3>
-    <div class="log" id="log"></div>
+
+  <div class="legendRow">
+   <span>
+    <i class="statusDot warn"></i>
+    Atenção
+   </span>
+
+   <span>
+    <i class="statusDot alarm"></i>
+    Falha
+   </span>
   </div>
+
+ </div>
+
+
+ <div class="card">
+
+  <h3>REGISTRO</h3>
+
+  <div id="log"
+       class="log">
+  </div>
+
+ </div>
+
 </section>
+
 </main>
 </div>
 
+
 <script>
-const state={
-  auto:true,
-  chillers:[false,true,true,false],
-  secondary:[true,true,false,true],
-  alarms:[],
-  hours:[452,51303,35801,0],
-  temp:5.4,
-  pressure:3.5,
-  tick:0
+
+/* =========================================================
+   ESTADO PRINCIPAL DO SIMULADOR
+========================================================= */
+
+const state = {
+
+ auto:true,
+
+ chillers:[
+  false,
+  true,
+  true,
+  false
+ ],
+
+ secondary:[
+  true,
+  true,
+  false,
+  true
+ ],
+
+ hours:[
+  452,
+  51303,
+  35801,
+  0
+ ],
+
+ temp:5.4,
+
+ pressure:3.50,
+
+ flow:0,
+
+ alarms:[],
+
+ previousAlarms:[],
+
+ tick:0
+
 };
 
-function log(msg){
-  const el=document.getElementById('log');
-  const t=new Date().toLocaleTimeString('pt-BR');
-  el.innerHTML=`[${t}] ${msg}<br>`+el.innerHTML;
+
+/* =========================================================
+   FUNÇÕES BÁSICAS
+========================================================= */
+
+function fmt(value,decimals=1){
+
+ return Number(value)
+  .toFixed(decimals)
+  .replace(".",",");
+
 }
-function fmt(n,d=1){return n.toFixed(d).replace('.',',')}
-function setText(id,text,cls){
-  const e=document.getElementById(id);e.textContent=text;
-  e.className='value '+(cls||'');
+
+
+function log(message){
+
+ const el=document.getElementById("log");
+
+ const time=new Date()
+  .toLocaleTimeString("pt-BR");
+
+ el.innerHTML=
+  `[${time}] ${message}<br>`+
+  el.innerHTML;
+
 }
-function update(){
-  // Bomba primária acompanha chiller
-  state.chillers.forEach((on,i)=>{
-    const p=document.getElementById('p'+(i+1));
-    p.classList.toggle('on',on);p.classList.toggle('off',!on);
-  });
-  state.secondary.forEach((on,i)=>{
-    const p=document.getElementById('s'+(i+1));
-    p.classList.toggle('on',on);p.classList.toggle('off',!on);
-  });
 
-  state.chillers.forEach((on,i)=>{
-    setText(`c${i+1}cmd`,on?'Liga':'Desliga',on?'green':'yellow');
-    setText(`c${i+1}status`,on?'Ligado':'Desligado',on?'green':'muted');
-    document.getElementById(`c${i+1}hours`).textContent=Math.floor(state.hours[i]);
-    document.getElementById(`c${i+1}temp`).textContent=fmt(state.temp)+' °C';
-  });
 
-  const cOn=state.chillers.filter(Boolean).length;
-  const pOn=cOn;
-  const sOn=state.secondary.filter(Boolean).length;
-  const flow=(cOn*sOn>0)?(cOn*sOn*0.033+0.002):0;
-  const normalFlow=(cOn>0 && sOn>0);
+/* =========================================================
+   ALTERA TEXTO
+========================================================= */
 
-  if(normalFlow){
-    state.temp += ((5.0 + (cOn===1?1.0:0.4)) - state.temp)*0.035;
-  }else{
-    state.temp += (8.5-state.temp)*0.025;
+function setText(id,text,className=""){
+
+ const el=document.getElementById(id);
+
+ if(!el)return;
+
+ el.textContent=text;
+
+ el.className="value "+className;
+
+}
+
+
+/* =========================================================
+   CALCULA BOMBAS PRIMÁRIAS
+=========================================================
+
+ Cada chiller necessita da sua bomba primária.
+
+ Portanto:
+
+ C01 -> BAGP01
+ C02 -> BAGP02
+ C03 -> BAGP03
+ C04 -> BAGP04
+
+========================================================= */
+
+function updatePrimaryPumps(){
+
+ state.chillers.forEach((running,index)=>{
+
+  const pump=document.getElementById("p"+(index+1));
+
+  pump.classList.toggle("on",running);
+  pump.classList.toggle("off",!running);
+
+ });
+
+}
+
+
+/* =========================================================
+   ATUALIZA BOMBAS SECUNDÁRIAS
+========================================================= */
+
+function updateSecondaryPumps(){
+
+ state.secondary.forEach((running,index)=>{
+
+  const pump=document.getElementById("s"+(index+1));
+
+  pump.classList.toggle("on",running);
+  pump.classList.toggle("off",!running);
+
+ });
+
+}
+
+
+/* =========================================================
+   CALCULA VAZÃO
+========================================================= */
+
+function calculateFlow(){
+
+ const primaryCount=
+  state.chillers.filter(Boolean).length;
+
+ const secondaryCount=
+  state.secondary.filter(Boolean).length;
+
+ if(primaryCount===0 || secondaryCount===0){
+
+  return 0;
+
+ }
+
+ /*
+  Cada bomba primária:
+  aproximadamente 28 m³/h
+
+  Cada bomba secundária:
+  aproximadamente 32 m³/h
+
+  O sistema fica limitado pelo menor lado.
+ */
+
+ const primaryFlow=
+  primaryCount*28;
+
+ const secondaryFlow=
+  secondaryCount*32;
+
+ return Math.min(primaryFlow,secondaryFlow);
+
+}
+
+
+/* =========================================================
+   TEMPERATURA
+========================================================= */
+
+function updateTemperature(){
+
+ const chillersOn=
+  state.chillers.filter(Boolean).length;
+
+ const secondaryOn=
+  state.secondary.filter(Boolean).length;
+
+ const flowAvailable=
+  state.flow>0;
+
+ if(chillersOn===0){
+
+  /*
+   Sem refrigeração:
+   temperatura sobe lentamente.
+  */
+
+  state.temp +=
+   (10.0-state.temp)*0.025;
+
+ }
+
+ else if(!flowAvailable){
+
+  /*
+   Chiller sem circulação:
+   temperatura sobe.
+  */
+
+  state.temp +=
+   (9.0-state.temp)*0.03;
+
+ }
+
+ else{
+
+  /*
+   Mais chillers = maior capacidade.
+
+   Base aproximada de saída:
+   1 chiller = 6,2 °C
+   2 chillers = 5,4 °C
+   3 chillers = 4,8 °C
+   4 chillers = 4,3 °C
+  */
+
+  const targets={
+   1:6.2,
+   2:5.4,
+   3:4.8,
+   4:4.3
+  };
+
+  const target=
+   targets[chillersOn];
+
+  state.temp +=
+   (target-state.temp)*0.035;
+
+ }
+
+ /* limite */
+
+ state.temp=
+  Math.max(3.5,Math.min(12,state.temp));
+
+}
+
+
+/* =========================================================
+   PRESSÃO
+========================================================= */
+
+function updatePressure(){
+
+ const p=
+  state.chillers.filter(Boolean).length;
+
+ const s=
+  state.secondary.filter(Boolean).length;
+
+ if(p===0 && s===0){
+
+  state.pressure +=
+   (0.5-state.pressure)*0.08;
+
+  return;
+
+ }
+
+ const target=
+  1.2+
+  (p*0.55)+
+  (s*0.25);
+
+ state.pressure +=
+  (target-state.pressure)*0.05;
+
+ state.pressure=
+  Math.max(0,Math.min(6,state.pressure));
+
+}
+
+
+/* =========================================================
+   ALARMES
+========================================================= */
+
+function calculateAlarms(){
+
+ const alarms=[];
+
+ const c=
+  state.chillers.filter(Boolean).length;
+
+ const s=
+  state.secondary.filter(Boolean).length;
+
+ if(c>0 && s===0){
+
+  alarms.push(
+   "Chillers ligados sem bombas secundárias"
+  );
+
+ }
+
+ if(c===0 && s>0){
+
+  alarms.push(
+   "Bombas secundárias ligadas sem chiller"
+  );
+
+ }
+
+ if(c>0 && state.flow===0){
+
+  alarms.push(
+   "FALHA DE FLUXO — circuito sem circulação"
+  );
+
+ }
+
+ if(state.flow>0 && state.flow<28){
+
+  alarms.push(
+   "Vazão insuficiente"
+  );
+
+ }
+
+ if(state.temp>7.5){
+
+  alarms.push(
+   "Temperatura de saída elevada"
+  );
+
+ }
+
+ if(state.pressure<1){
+
+  alarms.push(
+   "Pressão hidráulica baixa"
+  );
+
+ }
+
+ return alarms;
+
+}
+
+
+/* =========================================================
+   REGISTRO DE NOVOS ALARMES
+========================================================= */
+
+function registerNewAlarms(){
+
+ state.alarms.forEach(alarm=>{
+
+  if(!state.previousAlarms.includes(alarm)){
+
+   log("ALARME: "+alarm);
+
   }
 
-  // Alarmes didáticos
-  state.alarms=[];
-  if(cOn>0 && sOn===0) state.alarms.push('Chillers ligados sem bomba secundária');
-  if(cOn===0 && sOn>0) state.alarms.push('Bombas secundárias ligadas sem chiller');
-  if(cOn>0 && !normalFlow) state.alarms.push('Fluxo insuficiente');
-  if(state.temp>7.5) state.alarms.push('Temperatura de saída elevada');
+ });
 
-  document.getElementById('sumChillers').textContent=`${cOn} / 4`;
-  document.getElementById('sumPrimary').textContent=`${pOn} / 4`;
-  document.getElementById('sumSecondary').textContent=`${sOn} / 4`;
-  document.getElementById('sumTemp').textContent=fmt(state.temp)+' °C';
-  document.getElementById('sumFlow').textContent=fmt(flow,2)+' m³/h';
-  document.getElementById('sumPressure').textContent=fmt(state.pressure,1)+' bar';
-  document.getElementById('tempBig').textContent=fmt(state.temp)+' °C';
-  document.getElementById('flowRate').textContent=fmt(flow,2)+' m³/h';
-  document.getElementById('flowBig').textContent=normalFlow?'ON':'OFF';
-  document.getElementById('flowBig').className=normalFlow?'green':'red';
-  document.getElementById('alarmCount').textContent=state.alarms.length;
-  document.getElementById('alarmCount').className=state.alarms.length?'red':'green';
+ state.previousAlarms=[
+  ...state.alarms
+ ];
 
-  document.querySelectorAll('.pipeFlow').forEach(e=>e.classList.toggle('off',!normalFlow));
-
-  if(state.alarms.length){
-    document.getElementById('alarmList').innerHTML=state.alarms.map(a=>`<div class="red flash">● ALARME: ${a}</div>`).join('');
-  }else{
-    document.getElementById('alarmList').innerHTML='<span class="alarmNone">● Sistema normal — nenhum alarme ativo.</span>';
-  }
-
-  document.getElementById('modeLabel').textContent=state.auto?'AUTOMÁTICO':'MANUAL';
-  document.getElementById('modeLabel').className=state.auto?'green':'yellow';
-  document.getElementById('autoBtn').classList.toggle('selected',state.auto);
-  document.getElementById('manualBtn').classList.toggle('selected',!state.auto);
 }
 
-function setAuto(v){
-  state.auto=v;
-  log('Modo de operação: '+(v?'AUTOMÁTICO':'MANUAL'));
-  update();
+
+/* =========================================================
+   TUBULAÇÕES
+========================================================= */
+
+function updatePipes(){
+
+ const c=state.chillers;
+ const s=state.secondary;
+
+ /*
+  Alimentação geral
+ */
+
+ const primaryFlow=
+  c.some(Boolean);
+
+ const secondaryFlow=
+  s.some(Boolean);
+
+ const completeFlow=
+  primaryFlow &&
+  secondaryFlow;
+
+ togglePipe(
+  "flowPrimary",
+  primaryFlow
+ );
+
+ togglePipe(
+  "flowReturn",
+  primaryFlow
+ );
+
+ togglePipe(
+  "flowReturnUp",
+  primaryFlow
+ );
+
+ togglePipe(
+  "flowSecondary",
+  secondaryFlow
+ );
+
+ /*
+  Ramais dos chillers
+ */
+
+ togglePipe("flowP1",c[0]);
+ togglePipe("flowP2",c[1]);
+ togglePipe("flowP3",c[2]);
+
+ /*
+  O quarto ramal é usado
+  para representar o quarto chiller.
+ */
+
+ /*
+  Se houver quarto chiller,
+  reforçamos a alimentação geral.
+ */
+
+ /*
+  Secundário
+ */
+
+ togglePipe("flowS1",s[0]);
+ togglePipe("flowS2",s[1]);
+ togglePipe("flowS3",s[2]);
+
+ /*
+  velocidade visual
+ */
+
+ document.querySelectorAll(".pipeFlow")
+  .forEach(pipe=>{
+
+   pipe.classList.toggle(
+    "slow",
+    state.flow>0 &&
+    state.flow<40
+   );
+
+  });
+
 }
-function toggleChiller(n){
-  if(state.auto){
-    log(`C${String(n).padStart(2,'0')}: comando manual solicitado — simulador permite teste mesmo em automático.`);
-  }
-  state.chillers[n-1]=!state.chillers[n-1];
-  log(`Chiller ${String(n).padStart(2,'0')} ${state.chillers[n-1]?'LIGADO':'DESLIGADO'}`);
-  update();
+
+
+/* =========================================================
+   CONTROLA PIPE
+========================================================= */
+
+function togglePipe(id,on){
+
+ const pipe=document.getElementById(id);
+
+ if(!pipe)return;
+
+ pipe.classList.toggle("off",!on);
+
 }
-function toggleSecondary(n){
-  state.secondary[n-1]=!state.secondary[n-1];
-  log(`Bomba secundária ${String(n).padStart(2,'0')} ${state.secondary[n-1]?'LIGADA':'DESLIGADA'}`);
-  update();
+
+
+/* =========================================================
+   ATUALIZA CHILLERS
+========================================================= */
+
+function updateChillers(){
+
+ state.chillers.forEach((running,index)=>{
+
+  const n=index+1;
+
+  const card=
+   document.getElementById("chillerCard"+n);
+
+  const box=
+   document.getElementById("box"+n);
+
+  const status=
+   running ?
+   "Ligado":
+   "Desligado";
+
+  const cmd=
+   running ?
+   "Liga":
+   "Desliga";
+
+  setText(
+   `c${n}cmd`,
+   cmd,
+   running?"green":"yellow"
+  );
+
+  setText(
+   `c${n}status`,
+   status,
+   running?"green":"muted"
+  );
+
+  document.getElementById(
+   `c${n}hours`
+  ).textContent=
+   Math.floor(state.hours[index]);
+
+  document.getElementById(
+   `c${n}temp`
+  ).textContent=
+   fmt(state.temp)+" °C";
+
+  card.classList.toggle(
+   "running",
+   running
+  );
+
+  box.classList.toggle(
+   "running",
+   running
+  );
+
+  box.classList.toggle(
+   "alarm",
+   state.alarms.length>0 && running
+  );
+
+ });
+
 }
-function setAllChillers(v){
-  state.chillers=[v,v,v,v];
-  log('Todos os chillers: '+(v?'LIGADOS':'DESLIGADOS'));
-  update();
+
+
+/* =========================================================
+   ATUALIZA RESUMO
+========================================================= */
+
+function updateSummary(){
+
+ const c=
+  state.chillers.filter(Boolean).length;
+
+ const p=c;
+
+ const s=
+  state.secondary.filter(Boolean).length;
+
+ document.getElementById(
+  "sumChillers"
+ ).textContent=
+  `${c} / 4`;
+
+ document.getElementById(
+  "sumPrimary"
+ ).textContent=
+  `${p} / 4`;
+
+ document.getElementById(
+  "sumSecondary"
+ ).textContent=
+  `${s} / 4`;
+
+ document.getElementById(
+  "sumTemp"
+ ).textContent=
+  fmt(state.temp)+" °C";
+
+ document.getElementById(
+  "sumFlow"
+ ).textContent=
+  fmt(state.flow,1)+" m³/h";
+
+ document.getElementById(
+  "sumPressure"
+ ).textContent=
+  fmt(state.pressure,2)+" bar";
+
+ document.getElementById(
+  "tempBig"
+ ).textContent=
+  fmt(state.temp)+" °C";
+
+ document.getElementById(
+  "flowRate"
+ ).textContent=
+  fmt(state.flow,1)+" m³/h";
+
+ document.getElementById(
+  "pressureBig"
+ ).textContent=
+  fmt(state.pressure,2)+" bar";
+
+ const flowOk=
+  state.flow>0;
+
+ const flowEl=
+  document.getElementById("flowBig");
+
+ flowEl.textContent=
+  flowOk?"ON":"OFF";
+
+ flowEl.className=
+  flowOk?"green":"red";
+
 }
-function clearAlarms(){
-  if(state.alarms.length) log('Alarmes reconhecidos pelo operador.');
-  else log('Reconhecimento: nenhum alarme ativo.');
+
+
+/* =========================================================
+   ATUALIZA ALARMES NA TELA
+========================================================= */
+
+function updateAlarmPanel(){
+
+ const list=
+  document.getElementById("alarmList");
+
+ document.getElementById(
+  "alarmCount"
+ ).textContent=
+  state.alarms.length;
+
+ document.getElementById(
+  "alarmCount"
+ ).className=
+  state.alarms.length ?
+  "red":
+  "green";
+
+ if(state.alarms.length===0){
+
+  list.innerHTML=
+   `<span class="alarmNone">
+    ● Sistema normal — nenhum alarme ativo.
+   </span>`;
+
+  return;
+
+ }
+
+ list.innerHTML=
+  state.alarms
+   .map(alarm=>
+    `<div class="red">
+      ● ALARME: ${alarm}
+    </div>`
+   )
+   .join("");
+
 }
-function toggleAutoAlarm(){log('Comunicação NET testada — OK');}
+
+
+/* =========================================================
+   MODO
+========================================================= */
+
+function setAuto(value){
+
+ state.auto=value;
+
+ document.getElementById(
+  "modeLabel"
+ ).textContent=
+  value?"AUTOMÁTICO":"MANUAL";
+
+ document.getElementById(
+  "modeLabel"
+ ).className=
+  value?"green":"yellow";
+
+ document.getElementById(
+  "autoBtn"
+ ).classList.toggle(
+  "selected",
+  value
+ );
+
+ document.getElementById(
+  "manualBtn"
+ ).classList.toggle(
+  "selected",
+  !value
+ );
+
+ log(
+  "Modo alterado para "+
+  (value?"AUTOMÁTICO":"MANUAL")
+ );
+
+}
+
+
+/* =========================================================
+   CHILLER INDIVIDUAL
+========================================================= */
+
+function toggleChiller(number){
+
+ if(state.auto){
+
+  log(
+   `C${String(number).padStart(2,"0")} — comando manual executado para teste`
+  );
+
+ }
+
+ const index=number-1;
+
+ state.chillers[index]=
+  !state.chillers[index];
+
+ log(
+  `Chiller ${String(number).padStart(2,"0")} `+
+  (
+   state.chillers[index]?
+   "LIGADO":
+   "DESLIGADO"
+  )
+ );
+
+ updateAll();
+
+}
+
+
+/* =========================================================
+   BOMBA SECUNDÁRIA
+========================================================= */
+
+function toggleSecondary(number){
+
+ const index=number-1;
+
+ state.secondary[index]=
+  !state.secondary[index];
+
+ log(
+  `BAGSS${String(number).padStart(2,"0")} `+
+  (
+   state.secondary[index]?
+   "LIGADA":
+   "DESLIGADA"
+  )
+ );
+
+ updateAll();
+
+}
+
+
+/* =========================================================
+   TODOS OS CHILLERS
+========================================================= */
+
+function setAllChillers(value){
+
+ state.chillers=[
+  value,
+  value,
+  value,
+  value
+ ];
+
+ log(
+  value?
+  "Comando: TODOS OS CHILLERS LIGADOS":
+  "Comando: TODOS OS CHILLERS DESLIGADOS"
+ );
+
+ updateAll();
+
+}
+
+
+/* =========================================================
+   RECONHECER ALARMES
+========================================================= */
+
+function ackAlarms(){
+
+ if(state.alarms.length){
+
+  log(
+   "Alarmes reconhecidos pelo operador."
+  );
+
+ }else{
+
+  log(
+   "Reconhecimento solicitado — nenhum alarme ativo."
+  );
+
+ }
+
+}
+
+
+/* =========================================================
+   TESTE NET
+========================================================= */
+
+function testNet(){
+
+ log(
+  "NET — comunicação simulada OK."
+ );
+
+}
+
+
+/* =========================================================
+   MANUAL
+========================================================= */
+
 function showManual(){
-  alert(
+
+ alert(
 `CAG PRO — SIMULADOR
 
-Fluxo:
-Tanque → Bombas Primárias → Chillers → Barramento → Bombas Secundárias → Sistema.
+SEQUÊNCIA DO CIRCUITO:
+
+Tanque de expansão
+        ↓
+Bombas BAGP
+        ↓
+Chillers
+        ↓
+Retorno hidráulico
+        ↓
+Bombas BAGSS
+        ↓
+Circuito secundário
 
 AUTOMÁTICO:
-O simulador atualiza temperatura, vazão e alarmes automaticamente.
+O simulador calcula temperatura,
+vazão, pressão e alarmes.
 
 MANUAL:
-Use os botões C01–C04 e S01–S04 para testar estados.
+Os equipamentos podem ser ligados
+e desligados individualmente.
 
 ALARMES:
-• Chiller sem bomba secundária
-• Bomba secundária sem chiller
-• Fluxo insuficiente
+• Falta de fluxo
+• Chiller sem secundária
+• Secundária sem chiller
+• Vazão insuficiente
 • Temperatura elevada
+• Pressão baixa
 
-IMPORTANTE:
-Este arquivo é um simulador didático. Não envia comandos para CLP, inversores ou equipamentos reais.`
-  );
+Este sistema é apenas um
+SIMULADOR DIDÁTICO.
+
+Nenhum equipamento real é comandado.`
+ );
+
 }
 
+
+/* =========================================================
+   CICLO PRINCIPAL
+========================================================= */
+
+function updateAll(){
+
+ /*
+  Primeiro calculamos a hidráulica.
+ */
+
+ state.flow=
+  calculateFlow();
+
+ /*
+  Depois temperatura.
+ */
+
+ updateTemperature();
+
+ /*
+  Pressão.
+ */
+
+ updatePressure();
+
+ /*
+  Alarmes.
+ */
+
+ state.alarms=
+  calculateAlarms();
+
+ /*
+  Interface.
+ */
+
+ updatePrimaryPumps();
+
+ updateSecondaryPumps();
+
+ updateChillers();
+
+ updatePipes();
+
+ updateSummary();
+
+ updateAlarmPanel();
+
+ registerNewAlarms();
+
+}
+
+
+/* =========================================================
+   CICLO DE SIMULAÇÃO
+========================================================= */
+
 setInterval(()=>{
-  state.tick++;
-  state.chillers.forEach((on,i)=>{if(on) state.hours[i]+=1/3600});
-  // Pequena oscilação de pressão para simulação
-  state.pressure=3.45+Math.sin(state.tick/8)*0.08;
-  update();
+
+ state.tick++;
+
+ /*
+  Horímetro:
+  1 segundo real = 1/3600 hora
+ */
+
+ state.chillers.forEach(
+  (running,index)=>{
+
+   if(running){
+
+    state.hours[index]+=
+     1/3600;
+
+   }
+
+  }
+ );
+
+ /*
+  Pequena variação dinâmica.
+ */
+
+ const variation=
+  Math.sin(state.tick/10)*0.03;
+
+ state.pressure+=variation;
+
+ /*
+  No automático:
+  se nenhum chiller estiver ligado,
+  o sistema liga automaticamente os
+  dois chillers de menor carga.
+
+  Isso deixa o simulador realmente
+  automático.
+ */
+
+ if(state.auto){
+
+  const anyChiller=
+   state.chillers.some(Boolean);
+
+  if(!anyChiller){
+
+   state.chillers[1]=true;
+
+   state.chillers[2]=true;
+
+   log(
+    "AUTOMÁTICO — demanda detectada: C02 e C03 acionados."
+   );
+
+  }
+
+ }
+
+ updateAll();
+
 },1000);
 
-log('Sistema CAG PRO inicializado.');
-log('Chiller 02 e Chiller 03 ligados.');
-log('BAGSS01, BAGSS02 e BAGSS04 ligados.');
-update();
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+log(
+ "Sistema CAG PRO inicializado."
+);
+
+log(
+ "C02 e C03 em operação."
+);
+
+log(
+ "BAGP02 e BAGP03 acompanhando os chillers."
+);
+
+log(
+ "BAGSS01, BAGSS02 e BAGSS04 disponíveis."
+);
+
+updateAll();
+
 </script>
+
 </body>
 </html>
