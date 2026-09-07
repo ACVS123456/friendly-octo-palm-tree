@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CAG PRO — Simulador de Chillers</title>
+
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#020b16;
+  --panel:#061626;
+  --panel2:#081d31;
+  --line:#087dff;
+  --text:#e8f5ff;
+  --muted:#83a6c2;
+  --green:#25e56a;
+  --yellow:#ffd21c;
+  --red:#ff304f;
+  --cyan:#00d9ff;
+  --off:#8b99a5;
+}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 50% 20%,#0a2944 0,#03111f 38%,#010711 100%);color:var(--text)}
+button{font:inherit}
+.app{min-height:100vh;padding:10px}
+.header{
+  height:62px;border:1px solid #075fae;background:#03101e;
+  display:flex;align-items:center;gap:12px;padding:0 14px;
+  box-shadow:0 0 20px #006dff22
+}
+.logo{font-size:30px;font-weight:900;color:#ffd21c;min-width:70px}
+.nav{display:flex;gap:6px;flex:1}
+.nav button{
+  background:transparent;color:#d9edff;border:0;border-bottom:2px solid transparent;
+  padding:18px 18px;cursor:pointer;font-weight:bold
+}
+.nav button.active{border-bottom-color:#1b91ff;color:white}
+.headerRight{display:flex;align-items:center;gap:12px;font-size:12px;text-align:right}
+.iconBtn{width:40px;height:40px;border-radius:50%;border:1px solid #258fff;background:#073b71;color:white;cursor:pointer}
+.alarmBtn{background:#721526;border-color:#ff304f}
+.main{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+.scada{
+  position:relative;min-height:700px;overflow:hidden;
+  border:1px solid #075fae;background:#020b16;
+  border-radius:4px
+}
+.gridBg{
+  position:absolute;inset:0;opacity:.22;
+  background-image:linear-gradient(#0b3557 1px,transparent 1px),linear-gradient(90deg,#0b3557 1px,transparent 1px);
+  background-size:35px 35px
+}
+svg.pipeLayer{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.pipeBase{fill:none;stroke:#073d68;stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+.pipeFlow{
+  fill:none;stroke:#00a8ff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:16 13;animation:flow 1s linear infinite;filter:drop-shadow(0 0 6px #009dff)
+}
+.pipeFlow.off{stroke:#173a55;animation:none;filter:none}
+@keyframes flow{to{stroke-dashoffset:-58}}
+.zoneTitle{position:absolute;z-index:3;font-size:18px;font-weight:800;color:#dcefff;letter-spacing:.5px}
+.tank{left:2.5%;top:27%;z-index:4;position:absolute;width:105px;text-align:center}
+.tankBody{
+  height:145px;border:2px solid #2089dd;border-radius:48% 48% 25% 25%;
+  background:linear-gradient(#0b4f89 0 45%,#0a91dc 46% 100%);
+  box-shadow:inset 0 0 25px #00b7ff88,0 0 15px #008cff44
+}
+.tankText{font-size:13px;font-weight:bold;margin-bottom:6px}
+.device{
+  position:absolute;z-index:5;width:250px;border:1px solid #007eff;border-radius:10px;
+  background:linear-gradient(145deg,#061a2b,#020a14);padding:9px;
+  box-shadow:0 0 13px #0088ff25
+}
+.chiller{height:128px}
+.device h3{margin:0 0 5px;color:#dff2ff;font-size:16px}
+.deviceGrid{display:grid;grid-template-columns:70px 1fr;gap:3px;font-size:12px}
+.value{font-weight:800}
+.green{color:var(--green)}.yellow{color:var(--yellow)}.red{color:var(--red)}.muted{color:var(--muted)}
+.chillerBox{
+  position:absolute;left:28%;width:205px;height:100px;z-index:4;
+  border:2px solid #7f9db1;border-radius:8px;
+  background:linear-gradient(135deg,#d7dde0,#788894 45%,#dce3e6);
+  box-shadow:0 0 18px #00a8ff18
+}
+.chillerBox:before,.chillerBox:after{
+  content:"";position:absolute;top:-13px;width:33px;height:10px;border-radius:3px;background:#aeb8bd;border:1px solid #52626d
+}
+.chillerBox:before{left:34px;box-shadow:48px 0 #aeb8bd,96px 0 #aeb8bd}
+.chillerBox:after{right:20px;opacity:.9}
+.fan{position:absolute;width:27px;height:27px;border:2px solid #41535d;border-radius:50%;left:82px;top:34px}
+.fan:before,.fan:after{content:"";position:absolute;left:11px;top:2px;width:4px;height:19px;background:#52626d;border-radius:50%;transform:rotate(25deg)}
+.fan:after{transform:rotate(115deg)}
+.pump{
+  position:absolute;z-index:6;width:90px;height:48px;
+  display:flex;align-items:center;gap:5px
+}
+.motor{width:26px;height:34px;border-radius:4px;background:#adb8bd;border:2px solid #4d626d}
+.pumpWheel{
+  width:38px;height:38px;border-radius:50%;border:4px solid #3bd8ff;
+  background:#073d5c;position:relative;box-shadow:0 0 12px #00b7ff66
+}
+.pumpWheel:before{content:"";position:absolute;inset:7px;border-radius:50%;border:3px dotted #b9efff}
+.pump.on .pumpWheel{animation:spin .65s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pump.off .pumpWheel{filter:grayscale(1);opacity:.55}
+.pumpLabel{position:absolute;top:43px;left:0;font-size:12px;font-weight:bold;color:#b9dcf2}
+.controls{
+  position:absolute;z-index:10;right:12px;top:12px;width:235px;
+  border:1px solid #087dff;background:#041526ee;border-radius:10px;padding:10px;
+  backdrop-filter:blur(4px)
+}
+.controls h2{font-size:16px;margin:0 0 8px}
+.controlRow{display:flex;gap:5px;margin:5px 0}
+.smallBtn{
+  flex:1;padding:7px;border-radius:6px;border:1px solid #1a73b8;background:#082943;color:#dff4ff;cursor:pointer
+}
+.smallBtn:hover{background:#0d3c61}
+.smallBtn.selected{background:#075fae;border-color:#3cb8ff}
+.summary{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:0;
+  border:1px solid #075fae;background:#03111f;padding:12px;margin-top:10px
+}
+.sumItem{min-height:72px;padding:7px 12px;border-right:1px solid #164566}
+.sumItem:last-child{border-right:0}
+.sumTitle{color:#a8c6dc;font-size:12px}.sumValue{font-size:22px;font-weight:900;margin-top:8px}
+.statusDot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--off);margin-right:6px;box-shadow:0 0 8px #000}
+.statusDot.on{background:var(--green);box-shadow:0 0 12px var(--green)}
+.statusDot.warn{background:var(--yellow);box-shadow:0 0 12px var(--yellow)}
+.statusDot.alarm{background:var(--red);box-shadow:0 0 12px var(--red);animation:blink .7s infinite}
+@keyframes blink{50%{opacity:.25}}
+.bottom{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-top:10px}
+.card{border:1px solid #075fae;background:#03111f;padding:12px;border-radius:5px}
+.card h3{margin:0 0 12px;font-size:14px;color:#dff2ff}
+.legendRow{display:flex;gap:20px;align-items:center;font-size:12px}
+.alarmPanel{min-height:115px}
+.alarmList{font-size:12px;line-height:1.7}
+.alarmNone{color:var(--green)}
+.log{
+  max-height:140px;overflow:auto;font-family:monospace;font-size:11px;color:#9fc6df;
+  background:#010811;border:1px solid #0a2e4b;padding:7px
+}
+.badge{display:inline-block;padding:2px 7px;border-radius:10px;background:#0b3655;font-size:10px}
+.flash{animation:blink .8s infinite}
+@media(max-width:1100px){
+  .summary{grid-template-columns:repeat(3,1fr)}
+  .bottom{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .nav button{padding:10px 7px;font-size:11px}.headerRight{display:none}
+  .scada{min-height:1000px}
+  .controls{position:relative;right:auto;top:auto;margin:10px;width:auto}
+  .device{width:220px}.chillerBox{left:25%;width:180px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+<header class="header">
+  <div class="logo">CAG</div>
+  <nav class="nav">
+    <button>PARAÍBA</button>
+    <button>JPA-TR</button>
+    <button class="active">CAG</button>
+  </nav>
+  <div class="headerRight">
+    <button class="iconBtn" onclick="showManual()">📋</button>
+    <span>CONSULTAR MANUAL<br>DE OPERAÇÃO</span>
+    <button class="iconBtn" onclick="toggleAutoAlarm()">NET</button>
+    <button class="iconBtn alarmBtn" onclick="clearAlarms()">🔔</button>
+  </div>
+</header>
+
+<main class="main">
+<section class="scada" id="scada">
+  <div class="gridBg"></div>
+  <div class="zoneTitle" style="left:76%;top:9%">SECUNDÁRIO</div>
+
+  <svg class="pipeLayer" viewBox="0 0 1200 700" preserveAspectRatio="none">
+    <!-- Primário -->
+    <path class="pipeBase" d="M125 365 H205 V135 H930 V405 H1050"/>
+    <path id="flowPrimary" class="pipeFlow" d="M125 365 H205 V135 H930 V405 H1050"/>
+    <path class="pipeBase" d="M205 135 V250"/>
+    <path id="flowP2" class="pipeFlow" d="M205 135 V250"/>
+    <path class="pipeBase" d="M205 250 V365"/>
+    <path id="flowP3" class="pipeFlow" d="M205 250 V365"/>
+    <path class="pipeBase" d="M205 365 V480"/>
+    <path id="flowP4" class="pipeFlow" d="M205 365 V480"/>
+    <path class="pipeBase" d="M205 480 V610 H930 V405"/>
+    <path id="flowReturn" class="pipeFlow" d="M205 480 V610 H930 V405"/>
+    <!-- Secundário -->
+    <path class="pipeBase" d="M930 405 H1070 V225 H1160"/>
+    <path id="flowSecondary" class="pipeFlow" d="M930 405 H1070 V225 H1160"/>
+    <path class="pipeBase" d="M1070 225 V330"/>
+    <path id="flowS2" class="pipeFlow" d="M1070 225 V330"/>
+    <path class="pipeBase" d="M1070 330 V435"/>
+    <path id="flowS3" class="pipeFlow" d="M1070 330 V435"/>
+    <path class="pipeBase" d="M1070 435 V540 H1160"/>
+    <path id="flowS4" class="pipeFlow" d="M1070 435 V540 H1160"/>
+  </svg>
+
+  <div class="tank">
+    <div class="tankText">Tanque de Expansão</div>
+    <div class="tankBody"></div>
+  </div>
+
+  <!-- CHILLERS -->
+  <div class="chillerBox" style="top:10%;"><div class="fan"></div></div>
+  <div class="chillerBox" style="top:27%;"><div class="fan"></div></div>
+  <div class="chillerBox" style="top:44%;"><div class="fan"></div></div>
+  <div class="chillerBox" style="top:61%;"><div class="fan"></div></div>
+
+  <div class="device chiller" style="left:47%;top:9%" id="chillerCard1">
+    <h3>Chiller 01</h3><div class="deviceGrid">
+      <span>Cmd:</span><span id="c1cmd" class="value yellow">Desliga</span>
+      <span>Status:</span><span id="c1status" class="value muted">Desligado</span>
+      <span>Horas:</span><span id="c1hours" class="value yellow">452</span>
+      <span>Saída:</span><span id="c1temp" class="value">5,4 °C</span>
+    </div>
+  </div>
+  <div class="device chiller" style="left:47%;top:26%" id="chillerCard2">
+    <h3>Chiller 02</h3><div class="deviceGrid">
+      <span>Cmd:</span><span id="c2cmd" class="value green">Liga</span>
+      <span>Status:</span><span id="c2status" class="value green">Ligado</span>
+      <span>Horas:</span><span id="c2hours" class="value yellow">51303</span>
+      <span>Saída:</span><span id="c2temp" class="value">5,4 °C</span>
+    </div>
+  </div>
+  <div class="device chiller" style="left:47%;top:43%" id="chillerCard3">
+    <h3>Chiller 03</h3><div class="deviceGrid">
+      <span>Cmd:</span><span id="c3cmd" class="value green">Liga</span>
+      <span>Status:</span><span id="c3status" class="value green">Ligado</span>
+      <span>Horas:</span><span id="c3hours" class="value yellow">35801</span>
+      <span>Saída:</span><span id="c3temp" class="value">5,4 °C</span>
+    </div>
+  </div>
+  <div class="device chiller" style="left:47%;top:60%" id="chillerCard4">
+    <h3>Chiller 04</h3><div class="deviceGrid">
+      <span>Cmd:</span><span id="c4cmd" class="value yellow">Desliga</span>
+      <span>Status:</span><span id="c4status" class="value muted">Desligado</span>
+      <span>Horas:</span><span id="c4hours" class="value yellow">0</span>
+      <span>Saída:</span><span id="c4temp" class="value">5,4 °C</span>
+    </div>
+  </div>
+
+  <!-- PRIMÁRIAS -->
+  <div class="pump on" style="left:18%;top:13%" id="p1"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGP01</div></div>
+  <div class="pump on" style="left:18%;top:30%" id="p2"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGP02</div></div>
+  <div class="pump on" style="left:18%;top:47%" id="p3"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGP03</div></div>
+  <div class="pump off" style="left:18%;top:64%" id="p4"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGP04</div></div>
+
+  <!-- SECUNDÁRIAS -->
+  <div class="pump on" style="left:85%;top:22%" id="s1"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGSS01</div></div>
+  <div class="pump on" style="left:85%;top:37%" id="s2"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGSS02</div></div>
+  <div class="pump off" style="left:85%;top:52%" id="s3"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGSS03</div></div>
+  <div class="pump on" style="left:85%;top:67%" id="s4"><div class="motor"></div><div class="pumpWheel"></div><div class="pumpLabel">BAGSS04</div></div>
+
+  <div style="position:absolute;z-index:6;left:67%;top:55%;font-size:13px">
+    <b>Temperatura:</b> <span id="tempBig" class="yellow">5,4 °C</span><br>
+    <b>Fluxo:</b> <span id="flowBig" class="green">ON</span><br>
+    <b>Vazão:</b> <span id="flowRate" class="yellow">0,2 m³/h</span>
+  </div>
+
+  <!-- CONTROLES -->
+  <aside class="controls">
+    <h2>🎛 CONTROLE DO SIMULADOR</h2>
+    <div class="controlRow">
+      <button class="smallBtn" onclick="setAllChillers(true)">LIGAR TODOS</button>
+      <button class="smallBtn" onclick="setAllChillers(false)">DESLIGAR</button>
+    </div>
+    <div class="controlRow">
+      <button class="smallBtn" onclick="setAuto(true)" id="autoBtn">AUTOMÁTICO</button>
+      <button class="smallBtn" onclick="setAuto(false)" id="manualBtn">MANUAL</button>
+    </div>
+    <div class="controlRow">
+      <button class="smallBtn" onclick="toggleChiller(1)">C01</button>
+      <button class="smallBtn" onclick="toggleChiller(2)">C02</button>
+      <button class="smallBtn" onclick="toggleChiller(3)">C03</button>
+      <button class="smallBtn" onclick="toggleChiller(4)">C04</button>
+    </div>
+    <div class="controlRow">
+      <button class="smallBtn" onclick="toggleSecondary(1)">S01</button>
+      <button class="smallBtn" onclick="toggleSecondary(2)">S02</button>
+      <button class="smallBtn" onclick="toggleSecondary(3)">S03</button>
+      <button class="smallBtn" onclick="toggleSecondary(4)">S04</button>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:#86a9c2">
+      Modo atual: <b id="modeLabel" class="green">AUTOMÁTICO</b><br>
+      Falhas simuladas: <b id="alarmCount" class="green">0</b>
+    </div>
+  </aside>
+</section>
+
+<section class="summary">
+  <div class="sumItem"><div class="sumTitle">CHILLERS LIGADOS</div><div class="sumValue" id="sumChillers">2 / 4</div></div>
+  <div class="sumItem"><div class="sumTitle">BOMBAS PRIMÁRIAS</div><div class="sumValue" id="sumPrimary">2 / 4</div></div>
+  <div class="sumItem"><div class="sumTitle">BOMBAS SECUNDÁRIAS</div><div class="sumValue" id="sumSecondary">3 / 4</div></div>
+  <div class="sumItem"><div class="sumTitle">TEMPERATURA DE SAÍDA</div><div class="sumValue" id="sumTemp">5,4 °C</div></div>
+  <div class="sumItem"><div class="sumTitle">VAZÃO</div><div class="sumValue" id="sumFlow">0,2 m³/h</div></div>
+  <div class="sumItem"><div class="sumTitle">PRESSÃO</div><div class="sumValue" id="sumPressure">3,5 bar</div></div>
+</section>
+
+<section class="bottom">
+  <div class="card alarmPanel">
+    <h3>EVENTOS / ALARMES</h3>
+    <div id="alarmList" class="alarmList"><span class="alarmNone">● Sistema normal — nenhum alarme ativo.</span></div>
+  </div>
+  <div class="card">
+    <h3>LEGENDA</h3>
+    <div class="legendRow"><span><i class="statusDot on"></i>Ligado</span><span><i class="statusDot"></i>Desligado</span></div>
+    <div class="legendRow" style="margin-top:12px"><span><i class="statusDot warn"></i>Atenção</span><span><i class="statusDot alarm"></i>Falha</span></div>
+  </div>
+  <div class="card">
+    <h3>REGISTRO</h3>
+    <div class="log" id="log"></div>
+  </div>
+</section>
+</main>
+</div>
+
+<script>
+const state={
+  auto:true,
+  chillers:[false,true,true,false],
+  secondary:[true,true,false,true],
+  alarms:[],
+  hours:[452,51303,35801,0],
+  temp:5.4,
+  pressure:3.5,
+  tick:0
+};
+
+function log(msg){
+  const el=document.getElementById('log');
+  const t=new Date().toLocaleTimeString('pt-BR');
+  el.innerHTML=`[${t}] ${msg}<br>`+el.innerHTML;
+}
+function fmt(n,d=1){return n.toFixed(d).replace('.',',')}
+function setText(id,text,cls){
+  const e=document.getElementById(id);e.textContent=text;
+  e.className='value '+(cls||'');
+}
+function update(){
+  // Bomba primária acompanha chiller
+  state.chillers.forEach((on,i)=>{
+    const p=document.getElementById('p'+(i+1));
+    p.classList.toggle('on',on);p.classList.toggle('off',!on);
+  });
+  state.secondary.forEach((on,i)=>{
+    const p=document.getElementById('s'+(i+1));
+    p.classList.toggle('on',on);p.classList.toggle('off',!on);
+  });
+
+  state.chillers.forEach((on,i)=>{
+    setText(`c${i+1}cmd`,on?'Liga':'Desliga',on?'green':'yellow');
+    setText(`c${i+1}status`,on?'Ligado':'Desligado',on?'green':'muted');
+    document.getElementById(`c${i+1}hours`).textContent=Math.floor(state.hours[i]);
+    document.getElementById(`c${i+1}temp`).textContent=fmt(state.temp)+' °C';
+  });
+
+  const cOn=state.chillers.filter(Boolean).length;
+  const pOn=cOn;
+  const sOn=state.secondary.filter(Boolean).length;
+  const flow=(cOn*sOn>0)?(cOn*sOn*0.033+0.002):0;
+  const normalFlow=(cOn>0 && sOn>0);
+
+  if(normalFlow){
+    state.temp += ((5.0 + (cOn===1?1.0:0.4)) - state.temp)*0.035;
+  }else{
+    state.temp += (8.5-state.temp)*0.025;
+  }
+
+  // Alarmes didáticos
+  state.alarms=[];
+  if(cOn>0 && sOn===0) state.alarms.push('Chillers ligados sem bomba secundária');
+  if(cOn===0 && sOn>0) state.alarms.push('Bombas secundárias ligadas sem chiller');
+  if(cOn>0 && !normalFlow) state.alarms.push('Fluxo insuficiente');
+  if(state.temp>7.5) state.alarms.push('Temperatura de saída elevada');
+
+  document.getElementById('sumChillers').textContent=`${cOn} / 4`;
+  document.getElementById('sumPrimary').textContent=`${pOn} / 4`;
+  document.getElementById('sumSecondary').textContent=`${sOn} / 4`;
+  document.getElementById('sumTemp').textContent=fmt(state.temp)+' °C';
+  document.getElementById('sumFlow').textContent=fmt(flow,2)+' m³/h';
+  document.getElementById('sumPressure').textContent=fmt(state.pressure,1)+' bar';
+  document.getElementById('tempBig').textContent=fmt(state.temp)+' °C';
+  document.getElementById('flowRate').textContent=fmt(flow,2)+' m³/h';
+  document.getElementById('flowBig').textContent=normalFlow?'ON':'OFF';
+  document.getElementById('flowBig').className=normalFlow?'green':'red';
+  document.getElementById('alarmCount').textContent=state.alarms.length;
+  document.getElementById('alarmCount').className=state.alarms.length?'red':'green';
+
+  document.querySelectorAll('.pipeFlow').forEach(e=>e.classList.toggle('off',!normalFlow));
+
+  if(state.alarms.length){
+    document.getElementById('alarmList').innerHTML=state.alarms.map(a=>`<div class="red flash">● ALARME: ${a}</div>`).join('');
+  }else{
+    document.getElementById('alarmList').innerHTML='<span class="alarmNone">● Sistema normal — nenhum alarme ativo.</span>';
+  }
+
+  document.getElementById('modeLabel').textContent=state.auto?'AUTOMÁTICO':'MANUAL';
+  document.getElementById('modeLabel').className=state.auto?'green':'yellow';
+  document.getElementById('autoBtn').classList.toggle('selected',state.auto);
+  document.getElementById('manualBtn').classList.toggle('selected',!state.auto);
+}
+
+function setAuto(v){
+  state.auto=v;
+  log('Modo de operação: '+(v?'AUTOMÁTICO':'MANUAL'));
+  update();
+}
+function toggleChiller(n){
+  if(state.auto){
+    log(`C${String(n).padStart(2,'0')}: comando manual solicitado — simulador permite teste mesmo em automático.`);
+  }
+  state.chillers[n-1]=!state.chillers[n-1];
+  log(`Chiller ${String(n).padStart(2,'0')} ${state.chillers[n-1]?'LIGADO':'DESLIGADO'}`);
+  update();
+}
+function toggleSecondary(n){
+  state.secondary[n-1]=!state.secondary[n-1];
+  log(`Bomba secundária ${String(n).padStart(2,'0')} ${state.secondary[n-1]?'LIGADA':'DESLIGADA'}`);
+  update();
+}
+function setAllChillers(v){
+  state.chillers=[v,v,v,v];
+  log('Todos os chillers: '+(v?'LIGADOS':'DESLIGADOS'));
+  update();
+}
+function clearAlarms(){
+  if(state.alarms.length) log('Alarmes reconhecidos pelo operador.');
+  else log('Reconhecimento: nenhum alarme ativo.');
+}
+function toggleAutoAlarm(){log('Comunicação NET testada — OK');}
+function showManual(){
+  alert(
+`CAG PRO — SIMULADOR
+
+Fluxo:
+Tanque → Bombas Primárias → Chillers → Barramento → Bombas Secundárias → Sistema.
+
+AUTOMÁTICO:
+O simulador atualiza temperatura, vazão e alarmes automaticamente.
+
+MANUAL:
+Use os botões C01–C04 e S01–S04 para testar estados.
+
+ALARMES:
+• Chiller sem bomba secundária
+• Bomba secundária sem chiller
+• Fluxo insuficiente
+• Temperatura elevada
+
+IMPORTANTE:
+Este arquivo é um simulador didático. Não envia comandos para CLP, inversores ou equipamentos reais.`
+  );
+}
+
+setInterval(()=>{
+  state.tick++;
+  state.chillers.forEach((on,i)=>{if(on) state.hours[i]+=1/3600});
+  // Pequena oscilação de pressão para simulação
+  state.pressure=3.45+Math.sin(state.tick/8)*0.08;
+  update();
+},1000);
+
+log('Sistema CAG PRO inicializado.');
+log('Chiller 02 e Chiller 03 ligados.');
+log('BAGSS01, BAGSS02 e BAGSS04 ligados.');
+update();
+</script>
+</body>
+</html>
