@@ -3,2244 +3,4375 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>CAG PRO — Simulador de Chillers</title>
+<title>CHILLER ANALYZER PRO</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
 :root{
- --bg:#020b16;
- --panel:#061626;
- --text:#e8f5ff;
- --muted:#7895aa;
- --green:#25e56a;
- --yellow:#ffd21c;
- --red:#ff304f;
- --cyan:#00d9ff;
- --blue:#087dff;
+    --bg:#020914;
+    --panel:#071522;
+    --panel2:#0b1d2d;
+    --line:#17364d;
+    --text:#e8f4ff;
+    --muted:#8fa9bd;
+    --blue:#1597ff;
+    --green:#00d084;
+    --yellow:#ffd166;
+    --red:#ff4d5e;
+    --orange:#ff9f43;
 }
 
-html,body{
- margin:0;
- min-height:100%;
- font-family:Arial,Helvetica,sans-serif;
- background:
- radial-gradient(circle at 50% 20%,#0a2944 0,#03111f 38%,#010711 100%);
- color:var(--text);
+body{
+    margin:0;
+    background:linear-gradient(135deg,#020914,#061827);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-button{font:inherit}
-
-.app{
- min-height:100vh;
- padding:10px;
+header{
+    padding:18px;
+    background:#04111d;
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    z-index:20;
 }
-
-/* ================= HEADER ================= */
 
-.header{
- height:62px;
- border:1px solid #075fae;
- background:#03101e;
- display:flex;
- align-items:center;
- gap:12px;
- padding:0 14px;
- box-shadow:0 0 20px #006dff22;
+header h1{
+    margin:0;
+    font-size:22px;
 }
 
-.logo{
- font-size:30px;
- font-weight:900;
- color:var(--yellow);
- min-width:70px;
-}
-
-.nav{
- display:flex;
- gap:6px;
- flex:1;
+header p{
+    margin:5px 0 0;
+    color:var(--muted);
+    font-size:13px;
 }
 
-.nav button{
- background:transparent;
- color:#d9edff;
- border:0;
- border-bottom:2px solid transparent;
- padding:18px;
- cursor:pointer;
- font-weight:bold;
+.status-bar{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+    padding:12px;
 }
 
-.nav button.active{
- border-bottom-color:#1b91ff;
- color:white;
+.status-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px;
 }
 
-.headerRight{
- display:flex;
- align-items:center;
- gap:10px;
- font-size:11px;
- text-align:right;
+.status-card span{
+    display:block;
+    color:var(--muted);
+    font-size:11px;
+    margin-bottom:5px;
 }
 
-.iconBtn{
- width:40px;
- height:40px;
- border-radius:50%;
- border:1px solid #258fff;
- background:#073b71;
- color:white;
- cursor:pointer;
+.status-card strong{
+    font-size:15px;
 }
 
-.alarmBtn{
- background:#721526;
- border-color:var(--red);
+.container{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    gap:12px;
+    padding:12px;
 }
-
-/* ================= SCADA ================= */
 
-.main{
- display:grid;
- gap:10px;
- margin-top:10px;
+.panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:15px;
 }
 
-.scada{
- position:relative;
- min-height:700px;
- overflow:hidden;
- border:1px solid #075fae;
- background:#020b16;
- border-radius:4px;
-}
-
-.gridBg{
- position:absolute;
- inset:0;
- opacity:.22;
- background-image:
- linear-gradient(#0b3557 1px,transparent 1px),
- linear-gradient(90deg,#0b3557 1px,transparent 1px);
- background-size:35px 35px;
+.panel h2{
+    margin:0 0 14px;
+    font-size:16px;
 }
-
-/* ================= TUBULAÇÃO ================= */
-
-svg.pipeLayer{
- position:absolute;
- inset:0;
- width:100%;
- height:100%;
- z-index:1;
-}
-
-.pipeBase{
- fill:none;
- stroke:#073d68;
- stroke-width:11;
- stroke-linecap:round;
- stroke-linejoin:round;
-}
-
-.pipeFlow{
- fill:none;
- stroke:#00baff;
- stroke-width:6;
- stroke-linecap:round;
- stroke-linejoin:round;
- stroke-dasharray:18 14;
- animation:flowAnimation .8s linear infinite;
- filter:drop-shadow(0 0 7px #009dff);
-}
-
-.pipeFlow.off{
- stroke:#173a55;
- animation:none;
- filter:none;
- opacity:.5;
-}
-
-.pipeFlow.slow{
- animation-duration:1.8s;
- opacity:.65;
-}
-
-@keyframes flowAnimation{
- to{
-  stroke-dashoffset:-64;
- }
-}
 
-/* ================= TANQUE ================= */
-
-.tank{
- position:absolute;
- left:2.5%;
- top:27%;
- width:105px;
- text-align:center;
- z-index:4;
-}
-
-.tankText{
- font-size:13px;
- font-weight:bold;
- margin-bottom:6px;
-}
-
-.tankBody{
- height:145px;
- border:2px solid #2089dd;
- border-radius:48% 48% 25% 25%;
- background:
- linear-gradient(
-  #0b4f89 0 45%,
-  #0a91dc 46% 100%
- );
- box-shadow:
- inset 0 0 25px #00b7ff88,
- 0 0 15px #008cff44;
- position:relative;
- overflow:hidden;
+.section{
+    border-top:1px solid var(--line);
+    padding-top:13px;
+    margin-top:13px;
 }
-
-.tankBody:after{
- content:"";
- position:absolute;
- left:-20%;
- width:140%;
- height:3px;
- top:45%;
- background:#8be8ff;
- box-shadow:0 0 8px #00d9ff;
- animation:tankLevel 3s ease-in-out infinite;
-}
-
-@keyframes tankLevel{
- 50%{top:42%}
-}
 
-/* ================= CHILLER ================= */
-
-.chillerBox{
- position:absolute;
- left:28%;
- width:205px;
- height:100px;
- z-index:4;
- border:2px solid #7f9db1;
- border-radius:8px;
- background:
- linear-gradient(135deg,#d7dde0,#788894 45%,#dce3e6);
- box-shadow:0 0 18px #00a8ff18;
- transition:.3s;
+label{
+    display:block;
+    color:var(--muted);
+    font-size:11px;
+    margin-bottom:5px;
 }
 
-.chillerBox.running{
- box-shadow:
- 0 0 20px #00a8ff66,
- 0 0 35px #00a8ff22;
+input,
+select,
+textarea{
+    width:100%;
+    background:#020c16;
+    color:var(--text);
+    border:1px solid #20455f;
+    border-radius:7px;
+    padding:9px;
+    outline:none;
 }
 
-.chillerBox.alarm{
- border-color:var(--red);
- box-shadow:0 0 20px #ff304f88;
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:var(--blue);
 }
 
-.chillerBox:before,
-.chillerBox:after{
- content:"";
- position:absolute;
- top:-13px;
- width:33px;
- height:10px;
- border-radius:3px;
- background:#aeb8bd;
- border:1px solid #52626d;
+textarea{
+    resize:vertical;
+    min-height:70px;
 }
 
-.chillerBox:before{
- left:34px;
- box-shadow:
- 48px 0 #aeb8bd,
- 96px 0 #aeb8bd;
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
 }
 
-.chillerBox:after{
- right:20px;
+.form-grid .full{
+    grid-column:1/-1;
 }
 
-.fan{
- position:absolute;
- width:27px;
- height:27px;
- border:2px solid #41535d;
- border-radius:50%;
- left:82px;
- top:34px;
+.btn{
+    width:100%;
+    border:0;
+    border-radius:7px;
+    padding:10px;
+    margin-top:7px;
+    cursor:pointer;
+    font-weight:bold;
+    color:white;
+    background:#155b88;
 }
 
-.fan:before,
-.fan:after{
- content:"";
- position:absolute;
- left:11px;
- top:2px;
- width:4px;
- height:19px;
- background:#52626d;
- border-radius:50%;
- transform:rotate(25deg);
+.btn:hover{
+    filter:brightness(1.15);
 }
 
-.fan:after{
- transform:rotate(115deg);
+.btn-primary{
+    background:#087fca;
 }
 
-.chillerBox.running .fan{
- animation:fanSpin .55s linear infinite;
+.btn-success{
+    background:#087d52;
 }
 
-@keyframes fanSpin{
- to{transform:rotate(360deg)}
+.btn-warning{
+    background:#8a6515;
 }
 
-/* ================= CARDS ================= */
-
-.device{
- position:absolute;
- z-index:5;
- width:250px;
- border:1px solid #007eff;
- border-radius:10px;
- background:linear-gradient(145deg,#061a2b,#020a14);
- padding:9px;
- box-shadow:0 0 13px #0088ff25;
- transition:.25s;
+.btn-danger{
+    background:#8d2632;
 }
 
-.device.running{
- border-color:#25e56a;
- box-shadow:0 0 16px #25e56a22;
+.btn-print{
+    background:#455a64;
 }
 
-.device.alarm{
- border-color:var(--red);
- box-shadow:0 0 18px #ff304f44;
+.full{
+    width:100%;
 }
 
-.chiller{
- height:128px;
+.architecture{
+    background:#04101a;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px;
+    font-size:12px;
+    line-height:1.7;
+    color:#cce5f5;
 }
 
-.device h3{
- margin:0 0 6px;
- color:#dff2ff;
- font-size:16px;
+.architecture b{
+    color:#55baff;
 }
 
-.deviceGrid{
- display:grid;
- grid-template-columns:70px 1fr;
- gap:4px;
- font-size:12px;
+.compressor-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
+    margin-top:7px;
 }
 
-.value{
- font-weight:800;
+.comp{
+    padding:8px 2px;
+    background:#092338;
+    border:1px solid #24516d;
+    border-radius:6px;
+    text-align:center;
+    cursor:pointer;
+    font-size:12px;
 }
-
-.green{color:var(--green)}
-.yellow{color:var(--yellow)}
-.red{color:var(--red)}
-.muted{color:var(--muted)}
 
-/* ================= BOMBAS ================= */
-
-.pump{
- position:absolute;
- z-index:6;
- width:90px;
- height:48px;
- display:flex;
- align-items:center;
- gap:5px;
+.comp:hover{
+    border-color:var(--blue);
 }
 
-.motor{
- width:26px;
- height:34px;
- border-radius:4px;
- background:#adb8bd;
- border:2px solid #4d626d;
+.comp.active{
+    background:#0c6091;
+    border-color:#5bc5ff;
 }
 
-.pumpWheel{
- width:38px;
- height:38px;
- border-radius:50%;
- border:4px solid #3bd8ff;
- background:#073d5c;
- position:relative;
- box-shadow:0 0 12px #00b7ff66;
+.right{
+    min-width:0;
 }
 
-.pumpWheel:before{
- content:"";
- position:absolute;
- inset:7px;
- border-radius:50%;
- border:3px dotted #b9efff;
+.analysis{
+    border-radius:12px;
+    padding:15px;
+    border:1px solid var(--line);
+    background:var(--panel);
 }
 
-.pump.on .pumpWheel{
- animation:spin .55s linear infinite;
+.analysis.normal{
+    border-color:#087d52;
 }
 
-.pump.off .pumpWheel{
- filter:grayscale(1);
- opacity:.45;
+.analysis.attention{
+    border-color:var(--yellow);
 }
 
-.pump.alarm .pumpWheel{
- border-color:var(--red);
- box-shadow:0 0 15px var(--red);
+.analysis.critical{
+    border-color:var(--red);
 }
 
-@keyframes spin{
- to{transform:rotate(360deg)}
+.analysis-title{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+    margin-bottom:12px;
 }
 
-.pumpLabel{
- position:absolute;
- top:43px;
- left:0;
- font-size:12px;
- font-weight:bold;
- color:#b9dcf2;
+.badge{
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
 }
-
-/* ================= CONTROLE ================= */
 
-.controls{
- position:absolute;
- z-index:10;
- right:12px;
- top:12px;
- width:245px;
- border:1px solid #087dff;
- background:#041526ee;
- border-radius:10px;
- padding:10px;
- backdrop-filter:blur(5px);
+.badge-normal{
+    background:#075c3e;
+    color:#76ffc5;
 }
 
-.controls h2{
- font-size:16px;
- margin:0 0 8px;
+.badge-attention{
+    background:#6b5010;
+    color:#ffe28a;
 }
 
-.controlRow{
- display:flex;
- gap:5px;
- margin:5px 0;
+.badge-critical{
+    background:#721d28;
+    color:#ff9ba6;
 }
 
-.smallBtn{
- flex:1;
- padding:7px 5px;
- border-radius:6px;
- border:1px solid #1a73b8;
- background:#082943;
- color:#dff4ff;
- cursor:pointer;
- font-size:11px;
- font-weight:bold;
+.messages{
+    margin:10px 0 0;
+    padding-left:18px;
 }
 
-.smallBtn:hover{
- background:#0d3c61;
+.messages li{
+    margin:5px 0;
 }
 
-.smallBtn.selected{
- background:#075fae;
- border-color:#3cb8ff;
- box-shadow:0 0 8px #008cff44;
+.metrics{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin-top:12px;
 }
 
-/* ================= INFO CENTRAL ================= */
+.metric{
+    background:#04111b;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px;
+}
 
-.centralInfo{
- position:absolute;
- z-index:7;
- left:67%;
- top:55%;
- font-size:13px;
- line-height:1.8;
- background:#03111fcc;
- border:1px solid #0a4c77;
- border-radius:6px;
- padding:8px 12px;
+.metric span{
+    color:var(--muted);
+    display:block;
+    font-size:10px;
 }
 
-/* ================= SUMMARY ================= */
+.metric strong{
+    display:block;
+    margin-top:5px;
+    font-size:17px;
+}
 
-.summary{
- display:grid;
- grid-template-columns:repeat(6,1fr);
- gap:0;
- border:1px solid #075fae;
- background:#03111f;
- padding:12px;
+.memory{
+    margin-top:12px;
+    background:var(--panel2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px;
 }
 
-.sumItem{
- min-height:72px;
- padding:7px 12px;
- border-right:1px solid #164566;
+.memory h3{
+    margin:0 0 10px;
 }
 
-.sumItem:last-child{
- border-right:0;
+.memory-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
 }
 
-.sumTitle{
- color:#a8c6dc;
- font-size:12px;
+.memory-item{
+    background:#06131f;
+    border:1px solid var(--line);
+    padding:9px;
+    border-radius:7px;
 }
 
-.sumValue{
- font-size:22px;
- font-weight:900;
- margin-top:8px;
+.memory-item small{
+    color:var(--muted);
+    display:block;
 }
 
-/* ================= STATUS ================= */
+.memory-item b{
+    display:block;
+    margin-top:4px;
+}
 
-.statusDot{
- display:inline-block;
- width:12px;
- height:12px;
- border-radius:50%;
- background:#687681;
- margin-right:6px;
- box-shadow:0 0 8px #000;
+.table-wrap{
+    overflow:auto;
+    margin-top:12px;
 }
 
-.statusDot.on{
- background:var(--green);
- box-shadow:0 0 12px var(--green);
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:850px;
 }
 
-.statusDot.warn{
- background:var(--yellow);
- box-shadow:0 0 12px var(--yellow);
+th,
+td{
+    border-bottom:1px solid var(--line);
+    padding:8px;
+    font-size:11px;
+    text-align:left;
 }
 
-.statusDot.alarm{
- background:var(--red);
- box-shadow:0 0 12px var(--red);
- animation:blink .7s infinite;
+th{
+    color:#8dccf4;
+    background:#061421;
 }
 
-@keyframes blink{
- 50%{opacity:.25}
+.normal-text{
+    color:var(--green);
 }
 
-/* ================= BOTTOM ================= */
+.attention-text{
+    color:var(--yellow);
+}
 
-.bottom{
- display:grid;
- grid-template-columns:2fr 1fr 1fr;
- gap:10px;
+.critical-text{
+    color:var(--red);
 }
 
-.card{
- border:1px solid #075fae;
- background:#03111f;
- padding:12px;
- border-radius:5px;
+.filters{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:12px;
 }
 
-.card h3{
- margin:0 0 12px;
- font-size:14px;
- color:#dff2ff;
+.compare{
+    margin-top:12px;
 }
 
-.legendRow{
- display:flex;
- gap:20px;
- align-items:center;
- font-size:12px;
- margin-bottom:8px;
+.compare-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
 }
 
-.alarmList{
- font-size:12px;
- line-height:1.7;
+.compare-card{
+    background:#06131f;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px;
 }
 
-.alarmNone{
- color:var(--green);
+.compare-card h4{
+    margin:0 0 7px;
 }
 
-.log{
- max-height:140px;
- overflow:auto;
- font-family:monospace;
- font-size:11px;
- color:#9fc6df;
- background:#010811;
- border:1px solid #0a2e4b;
- padding:7px;
+.note{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.5;
+    margin-top:8px;
 }
 
-/* ================= RESPONSIVO ================= */
+@media(max-width:1000px){
 
-@media(max-width:1100px){
- .summary{
-  grid-template-columns:repeat(3,1fr);
- }
+    .status-bar{
+        grid-template-columns:repeat(2,1fr);
+    }
 
- .bottom{
-  grid-template-columns:1fr;
- }
+    .container{
+        grid-template-columns:1fr;
+    }
 
- .scada{
-  min-height:850px;
- }
-}
+    .metrics{
+        grid-template-columns:repeat(2,1fr);
+    }
 
-@media(max-width:760px){
+    .memory-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
 
- .header{
-  height:auto;
-  min-height:60px;
- }
+@media(max-width:600px){
 
- .nav button{
-  padding:10px 7px;
-  font-size:11px;
- }
+    .status-bar{
+        grid-template-columns:1fr;
+    }
 
- .headerRight{
-  display:none;
- }
+    .form-grid{
+        grid-template-columns:1fr;
+    }
 
- .scada{
-  min-height:1000px;
- }
+    .metrics{
+        grid-template-columns:1fr 1fr;
+    }
 
- .controls{
-  position:absolute;
-  top:10px;
-  right:10px;
-  width:220px;
- }
+    .memory-grid{
+        grid-template-columns:1fr;
+    }
 
- .device{
-  width:215px;
- }
+    .compare-grid{
+        grid-template-columns:1fr;
+    }
+}
 
- .chillerBox{
-  left:25%;
-  width:180px;
- }
+/* =====================================================
+   ÁREA INTERNA DE IMPRESSÃO
+===================================================== */
 
- .centralInfo{
-  left:55%;
-  top:75%;
- }
+#printReport{
+    display:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
-
-<header class="header">
-
- <div class="logo">CAG</div>
-
- <nav class="nav">
-  <button>PARAÍBA</button>
-  <button>JPA-TR</button>
-  <button class="active">CAG</button>
- </nav>
-
- <div class="headerRight">
-
-  <button class="iconBtn" onclick="showManual()">📋</button>
-
-  <span>
-   CONSULTAR MANUAL<br>
-   DE OPERAÇÃO
-  </span>
-
-  <button class="iconBtn" onclick="testNet()">NET</button>
-
-  <button class="iconBtn alarmBtn" onclick="ackAlarms()">🔔</button>
-
- </div>
-
+<header>
+    <h1>⚙️ CHILLER ANALYZER PRO</h1>
+    <p>
+        Analisador técnico de chillers —
+        registro, diagnóstico, histórico e relatório
+    </p>
 </header>
 
-<main class="main">
 
-<section class="scada">
+<!-- =====================================================
+     STATUS
+===================================================== -->
 
- <div class="gridBg"></div>
+<div class="status-bar">
 
- <div class="zoneTitle"
-      style="left:76%;top:9%">
-  SECUNDÁRIO
- </div>
+    <div class="status-card">
+        <span>CHILLER</span>
+        <strong id="statusChiller">CHILLER 01</strong>
+    </div>
 
- <!-- ================= TUBULAÇÕES ================= -->
+    <div class="status-card">
+        <span>CIRCUITO</span>
+        <strong id="statusCircuito">A</strong>
+    </div>
 
- <svg class="pipeLayer"
-      viewBox="0 0 1200 700"
-      preserveAspectRatio="none">
+    <div class="status-card">
+        <span>COMPRESSOR</span>
+        <strong id="statusCompressor">A1</strong>
+    </div>
 
-  <!-- alimentação primária -->
+    <div class="status-card">
+        <span>HISTÓRICO</span>
+        <strong id="statusHistorico">0 registros</strong>
+    </div>
 
-  <path class="pipeBase"
-        d="M125 365 H205 V135 H930"/>
+    <div class="status-card">
+        <span>ÚLTIMA MEDIÇÃO</span>
+        <strong id="statusUltima">---</strong>
+    </div>
 
-  <path id="flowPrimary"
-        class="pipeFlow"
-        d="M125 365 H205 V135 H930"/>
-
-  <!-- ramais dos chillers -->
-
-  <path class="pipeBase"
-        d="M205 135 V250"/>
-
-  <path id="flowP1"
-        class="pipeFlow"
-        d="M205 135 V250"/>
-
-  <path class="pipeBase"
-        d="M205 250 V365"/>
-
-  <path id="flowP2"
-        class="pipeFlow"
-        d="M205 250 V365"/>
-
-  <path class="pipeBase"
-        d="M205 365 V480"/>
-
-  <path id="flowP3"
-        class="pipeFlow"
-        d="M205 365 V480"/>
-
-  <path class="pipeBase"
-        d="M205 480 V610 H930"/>
-
-  <path id="flowReturn"
-        class="pipeFlow"
-        d="M205 480 V610 H930"/>
-
-  <!-- retorno para circuito -->
-
-  <path class="pipeBase"
-        d="M930 610 V405"/>
-
-  <path id="flowReturnUp"
-        class="pipeFlow"
-        d="M930 610 V405"/>
-
-  <!-- secundário -->
-
-  <path class="pipeBase"
-        d="M930 405 H1070 V225 H1160"/>
-
-  <path id="flowSecondary"
-        class="pipeFlow"
-        d="M930 405 H1070 V225 H1160"/>
-
-  <path class="pipeBase"
-        d="M1070 225 V330"/>
-
-  <path id="flowS1"
-        class="pipeFlow"
-        d="M1070 225 V330"/>
-
-  <path class="pipeBase"
-        d="M1070 330 V435"/>
-
-  <path id="flowS2"
-        class="pipeFlow"
-        d="M1070 330 V435"/>
-
-  <path class="pipeBase"
-        d="M1070 435 V540 H1160"/>
-
-  <path id="flowS3"
-        class="pipeFlow"
-        d="M1070 435 V540 H1160"/>
-
- </svg>
-
- <!-- ================= TANQUE ================= -->
-
- <div class="tank">
-
-  <div class="tankText">
-   Tanque de Expansão
-  </div>
-
-  <div class="tankBody"></div>
-
- </div>
-
- <!-- ================= CHILLER FÍSICO ================= -->
-
- <div class="chillerBox" id="box1" style="top:10%">
-  <div class="fan"></div>
- </div>
-
- <div class="chillerBox" id="box2" style="top:27%">
-  <div class="fan"></div>
- </div>
-
- <div class="chillerBox" id="box3" style="top:44%">
-  <div class="fan"></div>
- </div>
-
- <div class="chillerBox" id="box4" style="top:61%">
-  <div class="fan"></div>
- </div>
-
- <!-- ================= CARDS CHILLERS ================= -->
-
- <div class="device chiller"
-      id="chillerCard1"
-      style="left:47%;top:9%">
-
-  <h3>Chiller 01</h3>
-
-  <div class="deviceGrid">
-
-   <span>Cmd:</span>
-   <span id="c1cmd" class="value yellow">
-    Desliga
-   </span>
-
-   <span>Status:</span>
-   <span id="c1status" class="value muted">
-    Desligado
-   </span>
-
-   <span>Horas:</span>
-   <span id="c1hours" class="value yellow">
-    452
-   </span>
-
-   <span>Saída:</span>
-   <span id="c1temp" class="value">
-    5,4 °C
-   </span>
-
-  </div>
- </div>
-
-
- <div class="device chiller"
-      id="chillerCard2"
-      style="left:47%;top:26%">
-
-  <h3>Chiller 02</h3>
-
-  <div class="deviceGrid">
-
-   <span>Cmd:</span>
-   <span id="c2cmd" class="value green">
-    Liga
-   </span>
-
-   <span>Status:</span>
-   <span id="c2status" class="value green">
-    Ligado
-   </span>
-
-   <span>Horas:</span>
-   <span id="c2hours" class="value yellow">
-    51303
-   </span>
-
-   <span>Saída:</span>
-   <span id="c2temp" class="value">
-    5,4 °C
-   </span>
-
-  </div>
- </div>
-
-
- <div class="device chiller"
-      id="chillerCard3"
-      style="left:47%;top:43%">
-
-  <h3>Chiller 03</h3>
-
-  <div class="deviceGrid">
-
-   <span>Cmd:</span>
-   <span id="c3cmd" class="value green">
-    Liga
-   </span>
-
-   <span>Status:</span>
-   <span id="c3status" class="value green">
-    Ligado
-   </span>
-
-   <span>Horas:</span>
-   <span id="c3hours" class="value yellow">
-    35801
-   </span>
-
-   <span>Saída:</span>
-   <span id="c3temp" class="value">
-    5,4 °C
-   </span>
-
-  </div>
- </div>
-
-
- <div class="device chiller"
-      id="chillerCard4"
-      style="left:47%;top:60%">
-
-  <h3>Chiller 04</h3>
-
-  <div class="deviceGrid">
-
-   <span>Cmd:</span>
-   <span id="c4cmd" class="value yellow">
-    Desliga
-   </span>
-
-   <span>Status:</span>
-   <span id="c4status" class="value muted">
-    Desligado
-   </span>
-
-   <span>Horas:</span>
-   <span id="c4hours" class="value yellow">
-    0
-   </span>
-
-   <span>Saída:</span>
-   <span id="c4temp" class="value">
-    5,4 °C
-   </span>
-
-  </div>
- </div>
-
-
- <!-- ================= BOMBAS PRIMÁRIAS ================= -->
-
- <div class="pump on"
-      id="p1"
-      style="left:18%;top:13%">
-  <div class="motor"></div>
-  <div class="pumpWheel"></div>
-  <div class="pumpLabel">BAGP01</div>
- </div>
-
- <div class="pump on"
-      id="p2"
-      style="left:18%;top:30%">
-  <div class="motor"></div>
-  <div class="pumpWheel"></div>
-  <div class="pumpLabel">BAGP02</div>
- </div>
-
- <div class="pump on"
-      id="p3"
-      style="left:18%;top:47%">
-  <div class="motor"></div>
-  <div class="pumpWheel"></div>
-  <div class="pumpLabel">BAGP03</div>
- </div>
-
- <div class="pump off"
-      id="p4"
-      style="left:18%;top:64%">
-  <div class="motor"></div>
-  <div class="pumpWheel"></div>
-  <div class="pumpLabel">BAGP04</div>
- </div>
-
-
- <!-- ================= BOMBAS SECUNDÁRIAS ================= -->
-
- <div class="pump on"
-      id="s1"
-      style="left:85%;top:22%">
-  <div class="motor"></div>
-  <div class="pumpWheel"></div>
-  <div class="pumpLabel">BAGSS01</div>
- </div>
-
- <div class="pump on"
-      id="s2"
-      style="left:85%;top:37%">
-  <div class="motor"></div>
-  <div class="pumpWheel"></div>
-  <div class="pumpLabel">BAGSS02</div>
- </div>
-
- <div class="pump off"
-      id="s3"
-      style="left:85%;top:52%">
-  <div class="motor"></div>
-  <div class="pumpWheel"></div>
-  <div class="pumpLabel">BAGSS03</div>
- </div>
-
- <div class="pump on"
-      id="s4"
-      style="left:85%;top:67%">
-  <div class="motor"></div>
-  <div class="pumpWheel"></div>
-  <div class="pumpLabel">BAGSS04</div>
- </div>
-
-
- <!-- ================= INFORMAÇÕES ================= -->
-
- <div class="centralInfo">
-
-  <b>Temperatura:</b>
-  <span id="tempBig" class="yellow">
-   5,4 °C
-  </span>
-
-  <br>
-
-  <b>Fluxo:</b>
-  <span id="flowBig" class="green">
-   ON
-  </span>
-
-  <br>
-
-  <b>Vazão:</b>
-  <span id="flowRate" class="yellow">
-   0,00 m³/h
-  </span>
-
-  <br>
-
-  <b>Pressão:</b>
-  <span id="pressureBig" class="yellow">
-   3,50 bar
-  </span>
-
- </div>
-
-
- <!-- ================= CONTROLE ================= -->
-
- <aside class="controls">
-
-  <h2>🎛 CONTROLE DO SIMULADOR</h2>
-
-  <div class="controlRow">
-
-   <button class="smallBtn"
-           onclick="setAllChillers(true)">
-    LIGAR TODOS
-   </button>
-
-   <button class="smallBtn"
-           onclick="setAllChillers(false)">
-    DESLIGAR
-   </button>
-
-  </div>
-
-  <div class="controlRow">
-
-   <button id="autoBtn"
-           class="smallBtn selected"
-           onclick="setAuto(true)">
-    AUTOMÁTICO
-   </button>
-
-   <button id="manualBtn"
-           class="smallBtn"
-           onclick="setAuto(false)">
-    MANUAL
-   </button>
-
-  </div>
-
-  <div class="controlRow">
-
-   <button class="smallBtn" onclick="toggleChiller(1)">C01</button>
-   <button class="smallBtn" onclick="toggleChiller(2)">C02</button>
-   <button class="smallBtn" onclick="toggleChiller(3)">C03</button>
-   <button class="smallBtn" onclick="toggleChiller(4)">C04</button>
-
-  </div>
-
-  <div class="controlRow">
-
-   <button class="smallBtn" onclick="toggleSecondary(1)">S01</button>
-   <button class="smallBtn" onclick="toggleSecondary(2)">S02</button>
-   <button class="smallBtn" onclick="toggleSecondary(3)">S03</button>
-   <button class="smallBtn" onclick="toggleSecondary(4)">S04</button>
-
-  </div>
-
-  <div style="margin-top:8px;font-size:11px;color:#86a9c2">
-
-   Modo atual:
-   <b id="modeLabel" class="green">
-    AUTOMÁTICO
-   </b>
-
-   <br>
-
-   Falhas simuladas:
-   <b id="alarmCount" class="green">
-    0
-   </b>
-
-  </div>
-
- </aside>
-
-</section>
-
-
-<!-- ================= RESUMO ================= -->
-
-<section class="summary">
-
- <div class="sumItem">
-  <div class="sumTitle">CHILLERS LIGADOS</div>
-  <div class="sumValue" id="sumChillers">2 / 4</div>
- </div>
-
- <div class="sumItem">
-  <div class="sumTitle">BOMBAS PRIMÁRIAS</div>
-  <div class="sumValue" id="sumPrimary">2 / 4</div>
- </div>
-
- <div class="sumItem">
-  <div class="sumTitle">BOMBAS SECUNDÁRIAS</div>
-  <div class="sumValue" id="sumSecondary">3 / 4</div>
- </div>
-
- <div class="sumItem">
-  <div class="sumTitle">TEMPERATURA DE SAÍDA</div>
-  <div class="sumValue" id="sumTemp">5,4 °C</div>
- </div>
-
- <div class="sumItem">
-  <div class="sumTitle">VAZÃO</div>
-  <div class="sumValue" id="sumFlow">0,00 m³/h</div>
- </div>
-
- <div class="sumItem">
-  <div class="sumTitle">PRESSÃO</div>
-  <div class="sumValue" id="sumPressure">3,50 bar</div>
- </div>
-
-</section>
-
-
-<!-- ================= PARTE INFERIOR ================= -->
-
-<section class="bottom">
-
- <div class="card">
-
-  <h3>EVENTOS / ALARMES</h3>
-
-  <div id="alarmList"
-       class="alarmList">
-
-   <span class="alarmNone">
-    ● Sistema normal — nenhum alarme ativo.
-   </span>
-
-  </div>
-
- </div>
-
-
- <div class="card">
-
-  <h3>LEGENDA</h3>
-
-  <div class="legendRow">
-   <span>
-    <i class="statusDot on"></i>
-    Ligado
-   </span>
-
-   <span>
-    <i class="statusDot"></i>
-    Desligado
-   </span>
-  </div>
-
-  <div class="legendRow">
-   <span>
-    <i class="statusDot warn"></i>
-    Atenção
-   </span>
-
-   <span>
-    <i class="statusDot alarm"></i>
-    Falha
-   </span>
-  </div>
-
- </div>
-
-
- <div class="card">
-
-  <h3>REGISTRO</h3>
-
-  <div id="log"
-       class="log">
-  </div>
-
- </div>
-
-</section>
-
-</main>
 </div>
+
+
+<div class="container">
+
+
+<!-- =====================================================
+     PAINEL ESQUERDO
+===================================================== -->
+
+<div class="panel">
+
+    <h2>🎛️ SELEÇÃO DO EQUIPAMENTO</h2>
+
+    <label>Chiller</label>
+
+    <select id="chiller">
+        <option>CHILLER 01</option>
+        <option>CHILLER 02</option>
+        <option>CHILLER 03</option>
+    </select>
+
+
+    <label style="margin-top:8px;">
+        Circuito
+    </label>
+
+    <select id="circuito">
+        <option value="A">A</option>
+        <option value="B">B</option>
+    </select>
+
+
+    <label style="margin-top:8px;">
+        Compressor
+    </label>
+
+    <select id="compressor"></select>
+
+
+    <div class="architecture">
+
+        <b>ARQUITETURA</b><br><br>
+
+        <b>CHILLER 01</b><br>
+        Circuito A → A1 · A2 · A3 · A4<br>
+        Circuito B → B1 · B2 · B3 · B4<br><br>
+
+        <b>CHILLER 02</b><br>
+        Circuito A → A1 · A2 · A3 · A4<br>
+        Circuito B → B1 · B2 · B3 · B4<br><br>
+
+        <b>CHILLER 03</b><br>
+        Circuito A → A1 · A2 · A3 · A4<br>
+        Circuito B → B1 · B2 · B3 · B4
+
+    </div>
+
+
+    <div class="section">
+
+        <label>
+            COMPRESSORES — CIRCUITO A
+        </label>
+
+        <div class="compressor-grid">
+
+            <div class="comp"
+                 data-circuit="A"
+                 data-comp="A1">
+                A1
+            </div>
+
+            <div class="comp"
+                 data-circuit="A"
+                 data-comp="A2">
+                A2
+            </div>
+
+            <div class="comp"
+                 data-circuit="A"
+                 data-comp="A3">
+                A3
+            </div>
+
+            <div class="comp"
+                 data-circuit="A"
+                 data-comp="A4">
+                A4
+            </div>
+
+        </div>
+
+
+        <label style="margin-top:10px;">
+            COMPRESSORES — CIRCUITO B
+        </label>
+
+        <div class="compressor-grid">
+
+            <div class="comp"
+                 data-circuit="B"
+                 data-comp="B1">
+                B1
+            </div>
+
+            <div class="comp"
+                 data-circuit="B"
+                 data-comp="B2">
+                B2
+            </div>
+
+            <div class="comp"
+                 data-circuit="B"
+                 data-comp="B3">
+                B3
+            </div>
+
+            <div class="comp"
+                 data-circuit="B"
+                 data-comp="B4">
+                B4
+            </div>
+
+        </div>
+
+
+        <button
+            class="btn btn-primary"
+            onclick="consultarHistorico()">
+
+            🔎 CONSULTAR HISTÓRICO
+
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         NOVA MEDIÇÃO
+    ================================================= -->
+
+    <div class="section">
+
+        <h2>📝 NOVA MEDIÇÃO</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Data</label>
+                <input type="date" id="data">
+            </div>
+
+            <div>
+                <label>Hora</label>
+                <input type="time" id="hora">
+            </div>
+
+
+            <div>
+                <label>Modo IHM</label>
+
+                <select id="modo">
+
+                    <option>LOFF</option>
+                    <option>L-On</option>
+                    <option>L-Sc</option>
+                    <option>CCN</option>
+                    <option>rEM</option>
+                    <option>MAST</option>
+
+                </select>
+            </div>
+
+
+            <div>
+                <label>Bomba evaporador</label>
+
+                <select id="bomba">
+
+                    <option>DESLIGADA</option>
+                    <option>LIGADA</option>
+
+                </select>
+            </div>
+
+
+            <div>
+                <label>Alarme</label>
+
+                <select id="alarme">
+
+                    <option>NÃO</option>
+                    <option>SIM</option>
+
+                </select>
+            </div>
+
+
+            <div>
+                <label>Descrição do alarme</label>
+
+                <input
+                    id="descricaoAlarme"
+                    placeholder="Se houver">
+            </div>
+
+
+            <div>
+                <label>Corrente (A)</label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="corrente">
+            </div>
+
+
+            <div>
+                <label>Tensão (V)</label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="tensao">
+            </div>
+
+
+            <div>
+                <label>
+                    Temperatura ambiente (°C)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="ambiente">
+            </div>
+
+
+            <div>
+                <label>
+                    Água evaporador (°C)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="aguaEvap">
+            </div>
+
+
+            <div>
+                <label>
+                    Setpoint (°C)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="setpoint">
+            </div>
+
+
+            <div>
+                <label>
+                    Temp. condensação saturada (°C)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="condSaturada">
+            </div>
+
+
+            <div>
+                <label>
+                    Temp. sucção saturada (°C)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="sucSaturada">
+            </div>
+
+
+            <div>
+                <label>
+                    Temp. gás sucção (°C)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="gasSucao">
+            </div>
+
+
+            <div>
+                <label>
+                    Pressão sucção (kPa)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="pressaoSucao">
+            </div>
+
+
+            <div>
+                <label>
+                    Pressão descarga (kPa)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="pressaoDescarga">
+            </div>
+
+
+            <div>
+                <label>
+                    Superaquecimento IHM (°C)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="superaquecimento">
+            </div>
+
+
+            <div>
+                <label>
+                    Sub-resfriamento IHM (°C)
+                </label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="subresfriamento">
+            </div>
+
+
+            <div>
+                <label>Horas compressor</label>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    id="horas">
+            </div>
+
+
+            <div>
+                <label>Partidas</label>
+
+                <input
+                    type="number"
+                    step="1"
+                    id="partidas">
+            </div>
+
+
+            <div class="full">
+
+                <label>
+                    Observações técnicas
+                </label>
+
+                <textarea id="observacoes"></textarea>
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="btn btn-success full"
+            onclick="registrarMedicao()">
+
+            💾 REGISTRAR E ANALISAR
+
+        </button>
+
+
+        <button
+            class="btn btn-print full"
+            onclick="imprimirResultadoAnalise()">
+
+            🖨️ IMPRIMIR RESULTADO DA ANÁLISE
+
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         BANCO LOCAL
+    ================================================= -->
+
+    <div class="section">
+
+        <h2>💾 BANCO LOCAL</h2>
+
+
+        <button
+            class="btn btn-primary"
+            onclick="exportarDados()">
+
+            ⬇️ EXPORTAR HISTÓRICO
+
+        </button>
+
+
+        <input
+            type="file"
+            id="arquivoImportacao"
+            accept=".json"
+            style="margin-top:8px">
+
+
+        <button
+            class="btn btn-warning"
+            onclick="importarDados()">
+
+            ⬆️ IMPORTAR HISTÓRICO
+
+        </button>
+
+
+        <button
+            class="btn btn-danger"
+            onclick="limparBanco()">
+
+            🗑️ APAGAR BANCO LOCAL
+
+        </button>
+
+
+        <div class="note">
+
+            Os registros ficam armazenados
+            localmente no navegador.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     PAINEL DIREITO
+===================================================== -->
+
+<div class="right">
+
+
+    <div
+        id="analysisBox"
+        class="analysis normal">
+
+        <div class="analysis-title">
+
+            <div>
+
+                <h2 style="margin:0">
+                    📊 RESULTADO DA ANÁLISE
+                </h2>
+
+            </div>
+
+
+            <span
+                id="analysisBadge"
+                class="badge badge-normal">
+
+                NORMAL
+
+            </span>
+
+        </div>
+
+
+        <div id="analysisText">
+
+            Nenhuma medição registrada
+            para o equipamento selecionado.
+
+        </div>
+
+
+        <ul
+            id="analysisMessages"
+            class="messages">
+        </ul>
+
+
+        <div class="metrics">
+
+            <div class="metric">
+
+                <span>CORRENTE</span>
+
+                <strong id="metricCorrente">
+                    ---
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>AMBIENTE</span>
+
+                <strong id="metricAmbiente">
+                    ---
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>SUCÇÃO</span>
+
+                <strong id="metricSucao">
+                    ---
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>DESCARGA</span>
+
+                <strong id="metricDescarga">
+                    ---
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>SUPERAQUECIMENTO IHM</span>
+
+                <strong id="metricSH">
+                    ---
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         MEMÓRIA
+    ================================================= -->
+
+    <div class="memory">
+
+        <h3>🧠 MEMÓRIA TÉCNICA</h3>
+
+
+        <div class="memory-grid">
+
+            <div class="memory-item">
+                <small>Registros</small>
+                <b id="memCount">0</b>
+            </div>
+
+
+            <div class="memory-item">
+                <small>Tendência corrente</small>
+                <b id="memCorrente">---</b>
+            </div>
+
+
+            <div class="memory-item">
+                <small>Tendência sucção</small>
+                <b id="memSucao">---</b>
+            </div>
+
+
+            <div class="memory-item">
+                <small>Tendência descarga</small>
+                <b id="memDescarga">---</b>
+            </div>
+
+
+            <div class="memory-item">
+                <small>Média corrente</small>
+                <b id="avgCorrente">---</b>
+            </div>
+
+
+            <div class="memory-item">
+                <small>Média ambiente</small>
+                <b id="avgAmbiente">---</b>
+            </div>
+
+
+            <div class="memory-item">
+                <small>Média sucção</small>
+                <b id="avgSucao">---</b>
+            </div>
+
+
+            <div class="memory-item">
+                <small>Média descarga</small>
+                <b id="avgDescarga">---</b>
+            </div>
+
+        </div>
+
+
+        <div class="note">
+
+            O superaquecimento exibido pela IHM
+            é armazenado exatamente como informado.
+            A diferença entre temperatura do gás e
+            temperatura saturada de sucção é apenas
+            um indicador auxiliar.
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         HISTÓRICO
+    ================================================= -->
+
+    <div
+        class="panel"
+        style="margin-top:12px">
+
+        <h2>📜 HISTÓRICO DO COMPRESSOR</h2>
+
+
+        <div class="filters">
+
+            <div>
+
+                <label>Filtrar status</label>
+
+                <select
+                    id="filtroStatus"
+                    onchange="renderizarHistorico()">
+
+                    <option value="">
+                        TODOS
+                    </option>
+
+                    <option value="NORMAL">
+                        NORMAL
+                    </option>
+
+                    <option value="ATENÇÃO">
+                        ATENÇÃO
+                    </option>
+
+                    <option value="CRÍTICO">
+                        CRÍTICO
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label>Quantidade</label>
+
+                <select
+                    id="filtroQtd"
+                    onchange="renderizarHistorico()">
+
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="9999">TODOS</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Data/Hora</th>
+                        <th>Status</th>
+                        <th>A</th>
+                        <th>V</th>
+                        <th>Sucção</th>
+                        <th>Descarga</th>
+                        <th>Cond.</th>
+                        <th>Suc. Sat.</th>
+                        <th>Gás</th>
+                        <th>SH IHM</th>
+                        <th>Alarme</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="historicoBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         COMPARAÇÃO
+    ================================================= -->
+
+    <div class="panel compare">
+
+        <h2>
+            ⚖️ COMPARAÇÃO ENTRE CHILLERS
+        </h2>
+
+        <div
+            class="compare-grid"
+            id="comparativo">
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     RELATÓRIO INTERNO
+===================================================== -->
+
+<div id="printReport"></div>
 
 
 <script>
 
-/* =========================================================
-   ESTADO PRINCIPAL DO SIMULADOR
-========================================================= */
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
 
-const state = {
+const STORAGE_KEY =
+    "CHILLER_ANALYZER_HISTORICO_V5";
 
- auto:true,
 
- chillers:[
-  false,
-  true,
-  true,
-  false
- ],
+const CHILLERS = [
+    "CHILLER 01",
+    "CHILLER 02",
+    "CHILLER 03"
+];
 
- secondary:[
-  true,
-  true,
-  false,
-  true
- ],
 
- hours:[
-  452,
-  51303,
-  35801,
-  0
- ],
+const CIRCUITOS = [
+    "A",
+    "B"
+];
 
- temp:5.4,
 
- pressure:3.50,
+const COMPRESSORES = {
 
- flow:0,
+    A:[
+        "A1",
+        "A2",
+        "A3",
+        "A4"
+    ],
 
- alarms:[],
-
- previousAlarms:[],
-
- tick:0
+    B:[
+        "B1",
+        "B2",
+        "B3",
+        "B4"
+    ]
 
 };
 
 
-/* =========================================================
+/* =====================================================
    FUNÇÕES BÁSICAS
-========================================================= */
+===================================================== */
 
-function fmt(value,decimals=1){
+function $(id){
 
- return Number(value)
-  .toFixed(decimals)
-  .replace(".",",");
+    return document.getElementById(id);
 
 }
 
 
-function log(message){
+function lerNumero(id){
 
- const el=document.getElementById("log");
+    const v =
+        parseFloat($(id).value);
 
- const time=new Date()
-  .toLocaleTimeString("pt-BR");
-
- el.innerHTML=
-  `[${time}] ${message}<br>`+
-  el.innerHTML;
+    return Number.isFinite(v)
+        ?v
+        :null;
 
 }
 
 
-/* =========================================================
-   ALTERA TEXTO
-========================================================= */
+function fmt(v,dec=1){
 
-function setText(id,text,className=""){
+    if(
+        v === null ||
+        v === undefined ||
+        !Number.isFinite(Number(v))
+    ){
 
- const el=document.getElementById(id);
+        return "---";
 
- if(!el)return;
+    }
 
- el.textContent=text;
-
- el.className="value "+className;
-
-}
-
-
-/* =========================================================
-   CALCULA BOMBAS PRIMÁRIAS
-=========================================================
-
- Cada chiller necessita da sua bomba primária.
-
- Portanto:
-
- C01 -> BAGP01
- C02 -> BAGP02
- C03 -> BAGP03
- C04 -> BAGP04
-
-========================================================= */
-
-function updatePrimaryPumps(){
-
- state.chillers.forEach((running,index)=>{
-
-  const pump=document.getElementById("p"+(index+1));
-
-  pump.classList.toggle("on",running);
-  pump.classList.toggle("off",!running);
-
- });
+    return Number(v).toFixed(dec);
 
 }
 
 
-/* =========================================================
-   ATUALIZA BOMBAS SECUNDÁRIAS
-========================================================= */
+function agoraISO(){
 
-function updateSecondaryPumps(){
-
- state.secondary.forEach((running,index)=>{
-
-  const pump=document.getElementById("s"+(index+1));
-
-  pump.classList.toggle("on",running);
-  pump.classList.toggle("off",!running);
-
- });
+    return new Date().toISOString();
 
 }
 
 
-/* =========================================================
-   CALCULA VAZÃO
-========================================================= */
+function diferenca(a,b){
 
-function calculateFlow(){
+    if(
+        a == null ||
+        b == null
+    ){
 
- const primaryCount=
-  state.chillers.filter(Boolean).length;
+        return null;
 
- const secondaryCount=
-  state.secondary.filter(Boolean).length;
+    }
 
- if(primaryCount===0 || secondaryCount===0){
-
-  return 0;
-
- }
-
- /*
-  Cada bomba primária:
-  aproximadamente 28 m³/h
-
-  Cada bomba secundária:
-  aproximadamente 32 m³/h
-
-  O sistema fica limitado pelo menor lado.
- */
-
- const primaryFlow=
-  primaryCount*28;
-
- const secondaryFlow=
-  secondaryCount*32;
-
- return Math.min(primaryFlow,secondaryFlow);
+    return Number(a)-Number(b);
 
 }
 
 
-/* =========================================================
-   TEMPERATURA
-========================================================= */
+function variacaoPercentual(atual,anterior){
 
-function updateTemperature(){
+    if(
+        atual == null ||
+        anterior == null ||
+        anterior === 0
+    ){
 
- const chillersOn=
-  state.chillers.filter(Boolean).length;
+        return null;
 
- const secondaryOn=
-  state.secondary.filter(Boolean).length;
+    }
 
- const flowAvailable=
-  state.flow>0;
-
- if(chillersOn===0){
-
-  /*
-   Sem refrigeração:
-   temperatura sobe lentamente.
-  */
-
-  state.temp +=
-   (10.0-state.temp)*0.025;
-
- }
-
- else if(!flowAvailable){
-
-  /*
-   Chiller sem circulação:
-   temperatura sobe.
-  */
-
-  state.temp +=
-   (9.0-state.temp)*0.03;
-
- }
-
- else{
-
-  /*
-   Mais chillers = maior capacidade.
-
-   Base aproximada de saída:
-   1 chiller = 6,2 °C
-   2 chillers = 5,4 °C
-   3 chillers = 4,8 °C
-   4 chillers = 4,3 °C
-  */
-
-  const targets={
-   1:6.2,
-   2:5.4,
-   3:4.8,
-   4:4.3
-  };
-
-  const target=
-   targets[chillersOn];
-
-  state.temp +=
-   (target-state.temp)*0.035;
-
- }
-
- /* limite */
-
- state.temp=
-  Math.max(3.5,Math.min(12,state.temp));
+    return (
+        (atual-anterior) /
+        Math.abs(anterior)
+    )*100;
 
 }
 
 
-/* =========================================================
-   PRESSÃO
-========================================================= */
+function criarChaveCompressor(
+    chiller,
+    circuito,
+    compressor
+){
 
-function updatePressure(){
-
- const p=
-  state.chillers.filter(Boolean).length;
-
- const s=
-  state.secondary.filter(Boolean).length;
-
- if(p===0 && s===0){
-
-  state.pressure +=
-   (0.5-state.pressure)*0.08;
-
-  return;
-
- }
-
- const target=
-  1.2+
-  (p*0.55)+
-  (s*0.25);
-
- state.pressure +=
-  (target-state.pressure)*0.05;
-
- state.pressure=
-  Math.max(0,Math.min(6,state.pressure));
+    return (
+        chiller.replace(/\s+/g,"_")
+        +"__CIRCUITO_"
+        +circuito
+        +"__"
+        +compressor
+    );
 
 }
 
 
-/* =========================================================
-   ALARMES
-========================================================= */
+/* =====================================================
+   BANCO LOCAL
+===================================================== */
 
-function calculateAlarms(){
+function carregarBanco(){
 
- const alarms=[];
+    try{
 
- const c=
-  state.chillers.filter(Boolean).length;
+        const dados =
+            JSON.parse(
+                localStorage.getItem(
+                    STORAGE_KEY
+                )
+            );
 
- const s=
-  state.secondary.filter(Boolean).length;
+        return Array.isArray(dados)
+            ?dados
+            :[];
 
- if(c>0 && s===0){
+    }catch(e){
 
-  alarms.push(
-   "Chillers ligados sem bombas secundárias"
-  );
+        return [];
 
- }
-
- if(c===0 && s>0){
-
-  alarms.push(
-   "Bombas secundárias ligadas sem chiller"
-  );
-
- }
-
- if(c>0 && state.flow===0){
-
-  alarms.push(
-   "FALHA DE FLUXO — circuito sem circulação"
-  );
-
- }
-
- if(state.flow>0 && state.flow<28){
-
-  alarms.push(
-   "Vazão insuficiente"
-  );
-
- }
-
- if(state.temp>7.5){
-
-  alarms.push(
-   "Temperatura de saída elevada"
-  );
-
- }
-
- if(state.pressure<1){
-
-  alarms.push(
-   "Pressão hidráulica baixa"
-  );
-
- }
-
- return alarms;
+    }
 
 }
 
 
-/* =========================================================
-   REGISTRO DE NOVOS ALARMES
-========================================================= */
+function salvarBanco(dados){
 
-function registerNewAlarms(){
-
- state.alarms.forEach(alarm=>{
-
-  if(!state.previousAlarms.includes(alarm)){
-
-   log("ALARME: "+alarm);
-
-  }
-
- });
-
- state.previousAlarms=[
-  ...state.alarms
- ];
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(dados)
+    );
 
 }
 
 
-/* =========================================================
-   TUBULAÇÕES
-========================================================= */
+/* =====================================================
+   HISTÓRICO
+===================================================== */
 
-function updatePipes(){
+function obterHistoricoCompressor(){
 
- const c=state.chillers;
- const s=state.secondary;
+    const chiller =
+        $("chiller").value;
 
- /*
-  Alimentação geral
- */
+    const circuito =
+        $("circuito").value;
 
- const primaryFlow=
-  c.some(Boolean);
+    const compressor =
+        $("compressor").value;
 
- const secondaryFlow=
-  s.some(Boolean);
 
- const completeFlow=
-  primaryFlow &&
-  secondaryFlow;
+    const chave =
+        criarChaveCompressor(
+            chiller,
+            circuito,
+            compressor
+        );
 
- togglePipe(
-  "flowPrimary",
-  primaryFlow
- );
 
- togglePipe(
-  "flowReturn",
-  primaryFlow
- );
+    return carregarBanco()
 
- togglePipe(
-  "flowReturnUp",
-  primaryFlow
- );
+        .filter(r =>
 
- togglePipe(
-  "flowSecondary",
-  secondaryFlow
- );
+            r.chaveCompressor === chave
 
- /*
-  Ramais dos chillers
- */
+            ||
 
- togglePipe("flowP1",c[0]);
- togglePipe("flowP2",c[1]);
- togglePipe("flowP3",c[2]);
+            (
+                r.chiller === chiller &&
+                r.circuito === circuito &&
+                r.compressor === compressor
+            )
 
- /*
-  O quarto ramal é usado
-  para representar o quarto chiller.
- */
+        )
 
- /*
-  Se houver quarto chiller,
-  reforçamos a alimentação geral.
- */
+        .sort((a,b)=>
 
- /*
-  Secundário
- */
+            new Date(b.timestamp) -
+            new Date(a.timestamp)
 
- togglePipe("flowS1",s[0]);
- togglePipe("flowS2",s[1]);
- togglePipe("flowS3",s[2]);
-
- /*
-  velocidade visual
- */
-
- document.querySelectorAll(".pipeFlow")
-  .forEach(pipe=>{
-
-   pipe.classList.toggle(
-    "slow",
-    state.flow>0 &&
-    state.flow<40
-   );
-
-  });
+        );
 
 }
 
 
-/* =========================================================
-   CONTROLA PIPE
-========================================================= */
+/* =====================================================
+   ANÁLISE
+===================================================== */
 
-function togglePipe(id,on){
+function analisarRegistro(
+    novo,
+    historico
+){
 
- const pipe=document.getElementById(id);
+    let nivel = 0;
 
- if(!pipe)return;
+    const mensagens = [];
 
- pipe.classList.toggle("off",!on);
+    const anterior =
+        historico.length
+        ?historico[0]
+        :null;
+
+
+    if(!anterior){
+
+        return {
+
+            nivel:0,
+
+            status:"NORMAL",
+
+            mensagens:[
+                "Primeira medição registrada. Foi criada a referência histórica."
+            ],
+
+            indicadores:[]
+
+        };
+
+    }
+
+
+    /* ALARME */
+
+    if(novo.alarme === "SIM"){
+
+        nivel += 5;
+
+        mensagens.push(
+            "Alarme ativo informado pela IHM: "
+            +(novo.descricaoAlarme ||
+            "sem descrição")
+        );
+
+    }
+
+
+    /* CORRENTE */
+
+    const varCorr =
+        variacaoPercentual(
+            novo.corrente,
+            anterior.corrente
+        );
+
+
+    if(varCorr !== null){
+
+        if(Math.abs(varCorr)>=20){
+
+            nivel += 2;
+
+            mensagens.push(
+                "Variação significativa de corrente: "
+                +fmt(varCorr,1)
+                +"%."
+            );
+
+        }
+
+        else if(Math.abs(varCorr)>=10){
+
+            nivel += 1;
+
+            mensagens.push(
+                "Variação de corrente de "
+                +fmt(varCorr,1)
+                +"%."
+            );
+
+        }
+
+    }
+
+
+    /* TENSÃO */
+
+    const varTensao =
+        variacaoPercentual(
+            novo.tensao,
+            anterior.tensao
+        );
+
+
+    if(
+        varTensao !== null &&
+        Math.abs(varTensao)>=10
+    ){
+
+        nivel++;
+
+        mensagens.push(
+            "Variação de tensão de "
+            +fmt(varTensao,1)
+            +"%."
+        );
+
+    }
+
+
+    /* ÁGUA EVAPORADOR */
+
+    const difAgua =
+        diferenca(
+            novo.aguaEvap,
+            anterior.aguaEvap
+        );
+
+
+    if(
+        difAgua !== null &&
+        Math.abs(difAgua)>=3
+    ){
+
+        nivel++;
+
+        mensagens.push(
+            "Variação da temperatura da água do evaporador: "
+            +fmt(difAgua)
+            +" °C."
+        );
+
+    }
+
+
+    /* TEMPERATURAS */
+
+    const temperaturas = [
+
+        [
+            "condensação saturada",
+            "condSaturada"
+        ],
+
+        [
+            "sucção saturada",
+            "sucSaturada"
+        ],
+
+        [
+            "gás de sucção",
+            "gasSucao"
+        ]
+
+    ];
+
+
+    temperaturas.forEach(
+        ([nome,campo])=>{
+
+            const d =
+                diferenca(
+                    novo[campo],
+                    anterior[campo]
+                );
+
+
+            if(
+                d !== null &&
+                Math.abs(d)>=5
+            ){
+
+                nivel++;
+
+                mensagens.push(
+                    "Variação de "
+                    +nome
+                    +": "
+                    +fmt(d)
+                    +" °C."
+                );
+
+            }
+
+        }
+    );
+
+
+    /* SUPERHEAT IHM */
+
+    const difSH =
+        diferenca(
+            novo.superaquecimento,
+            anterior.superaquecimento
+        );
+
+
+    if(
+        difSH !== null &&
+        Math.abs(difSH)>=5
+    ){
+
+        nivel++;
+
+        mensagens.push(
+            "Variação do superaquecimento informado pela IHM: "
+            +fmt(difSH)
+            +" °C."
+        );
+
+    }
+
+
+    /* INDICADORES AUXILIARES */
+
+    const diferencaGasSaturado =
+        diferenca(
+            novo.gasSucao,
+            novo.sucSaturada
+        );
+
+
+    const diferencialCondensacao =
+        diferenca(
+            novo.condSaturada,
+            novo.ambiente
+        );
+
+
+    /* PRESSÃO DE SUCÇÃO */
+
+    const varSuc =
+        variacaoPercentual(
+            novo.pressaoSucao,
+            anterior.pressaoSucao
+        );
+
+
+    if(
+        varSuc !== null &&
+        Math.abs(varSuc)>=20
+    ){
+
+        nivel++;
+
+        mensagens.push(
+            "Variação da pressão de sucção: "
+            +fmt(varSuc,1)
+            +"%."
+        );
+
+    }
+
+
+    /* PRESSÃO DE DESCARGA */
+
+    const varDesc =
+        variacaoPercentual(
+            novo.pressaoDescarga,
+            anterior.pressaoDescarga
+        );
+
+
+    if(
+        varDesc !== null &&
+        Math.abs(varDesc)>=20
+    ){
+
+        nivel++;
+
+        mensagens.push(
+            "Variação da pressão de descarga: "
+            +fmt(varDesc,1)
+            +"%."
+        );
+
+    }
+
+
+    /* HORAS */
+
+    if(
+        novo.horas !== null &&
+        anterior.horas !== null &&
+        novo.horas < anterior.horas
+    ){
+
+        nivel++;
+
+        mensagens.push(
+            "Horas de operação menores que o último registro."
+        );
+
+    }
+
+
+    /* PARTIDAS */
+
+    if(
+        novo.partidas !== null &&
+        anterior.partidas !== null &&
+        novo.partidas < anterior.partidas
+    ){
+
+        nivel++;
+
+        mensagens.push(
+            "Quantidade de partidas menor que o registro anterior."
+        );
+
+    }
+
+
+    /* MODO */
+
+    if(
+        novo.modo !== anterior.modo
+    ){
+
+        mensagens.push(
+            "Modo de operação alterado de "
+            +anterior.modo
+            +" para "
+            +novo.modo
+            +"."
+        );
+
+    }
+
+
+    /* BOMBA */
+
+    if(
+        novo.bomba !== anterior.bomba
+    ){
+
+        mensagens.push(
+            "Estado da bomba do evaporador alterado."
+        );
+
+    }
+
+
+    let status =
+        "NORMAL";
+
+
+    if(nivel>=5){
+
+        status =
+            "CRÍTICO";
+
+    }
+
+    else if(nivel>=2){
+
+        status =
+            "ATENÇÃO";
+
+    }
+
+
+    if(!mensagens.length){
+
+        mensagens.push(
+            "Nenhuma alteração relevante detectada em relação ao registro anterior."
+        );
+
+    }
+
+
+    return {
+
+        nivel,
+
+        status,
+
+        mensagens,
+
+        indicadores:{
+            diferencaGasSaturado,
+            diferencialCondensacao
+        }
+
+    };
 
 }
 
 
-/* =========================================================
-   ATUALIZA CHILLERS
-========================================================= */
+/* =====================================================
+   REGISTRAR MEDIÇÃO
+===================================================== */
 
-function updateChillers(){
+function registrarMedicao(){
 
- state.chillers.forEach((running,index)=>{
+    const chiller =
+        $("chiller").value;
 
-  const n=index+1;
+    const circuito =
+        $("circuito").value;
 
-  const card=
-   document.getElementById("chillerCard"+n);
-
-  const box=
-   document.getElementById("box"+n);
-
-  const status=
-   running ?
-   "Ligado":
-   "Desligado";
-
-  const cmd=
-   running ?
-   "Liga":
-   "Desliga";
-
-  setText(
-   `c${n}cmd`,
-   cmd,
-   running?"green":"yellow"
-  );
-
-  setText(
-   `c${n}status`,
-   status,
-   running?"green":"muted"
-  );
-
-  document.getElementById(
-   `c${n}hours`
-  ).textContent=
-   Math.floor(state.hours[index]);
-
-  document.getElementById(
-   `c${n}temp`
-  ).textContent=
-   fmt(state.temp)+" °C";
-
-  card.classList.toggle(
-   "running",
-   running
-  );
-
-  box.classList.toggle(
-   "running",
-   running
-  );
-
-  box.classList.toggle(
-   "alarm",
-   state.alarms.length>0 && running
-  );
-
- });
-
-}
+    const compressor =
+        $("compressor").value;
 
 
-/* =========================================================
-   ATUALIZA RESUMO
-========================================================= */
+    const data =
+        $("data").value;
 
-function updateSummary(){
-
- const c=
-  state.chillers.filter(Boolean).length;
-
- const p=c;
-
- const s=
-  state.secondary.filter(Boolean).length;
-
- document.getElementById(
-  "sumChillers"
- ).textContent=
-  `${c} / 4`;
-
- document.getElementById(
-  "sumPrimary"
- ).textContent=
-  `${p} / 4`;
-
- document.getElementById(
-  "sumSecondary"
- ).textContent=
-  `${s} / 4`;
-
- document.getElementById(
-  "sumTemp"
- ).textContent=
-  fmt(state.temp)+" °C";
-
- document.getElementById(
-  "sumFlow"
- ).textContent=
-  fmt(state.flow,1)+" m³/h";
-
- document.getElementById(
-  "sumPressure"
- ).textContent=
-  fmt(state.pressure,2)+" bar";
-
- document.getElementById(
-  "tempBig"
- ).textContent=
-  fmt(state.temp)+" °C";
-
- document.getElementById(
-  "flowRate"
- ).textContent=
-  fmt(state.flow,1)+" m³/h";
-
- document.getElementById(
-  "pressureBig"
- ).textContent=
-  fmt(state.pressure,2)+" bar";
-
- const flowOk=
-  state.flow>0;
-
- const flowEl=
-  document.getElementById("flowBig");
-
- flowEl.textContent=
-  flowOk?"ON":"OFF";
-
- flowEl.className=
-  flowOk?"green":"red";
-
-}
+    const hora =
+        $("hora").value;
 
 
-/* =========================================================
-   ATUALIZA ALARMES NA TELA
-========================================================= */
+    if(!data || !hora){
 
-function updateAlarmPanel(){
+        alert(
+            "Informe a data e a hora."
+        );
 
- const list=
-  document.getElementById("alarmList");
+        return;
 
- document.getElementById(
-  "alarmCount"
- ).textContent=
-  state.alarms.length;
-
- document.getElementById(
-  "alarmCount"
- ).className=
-  state.alarms.length ?
-  "red":
-  "green";
-
- if(state.alarms.length===0){
-
-  list.innerHTML=
-   `<span class="alarmNone">
-    ● Sistema normal — nenhum alarme ativo.
-   </span>`;
-
-  return;
-
- }
-
- list.innerHTML=
-  state.alarms
-   .map(alarm=>
-    `<div class="red">
-      ● ALARME: ${alarm}
-    </div>`
-   )
-   .join("");
-
-}
+    }
 
 
-/* =========================================================
-   MODO
-========================================================= */
+    const novo = {
 
-function setAuto(value){
+        id:
+            Date.now().toString(36)
+            +"_"
+            +Math.random()
+                .toString(36)
+                .slice(2),
 
- state.auto=value;
 
- document.getElementById(
-  "modeLabel"
- ).textContent=
-  value?"AUTOMÁTICO":"MANUAL";
+        timestamp:
+            new Date(
+                data+"T"+hora
+            ).toISOString(),
 
- document.getElementById(
-  "modeLabel"
- ).className=
-  value?"green":"yellow";
 
- document.getElementById(
-  "autoBtn"
- ).classList.toggle(
-  "selected",
-  value
- );
+        data,
+        hora,
 
- document.getElementById(
-  "manualBtn"
- ).classList.toggle(
-  "selected",
-  !value
- );
+        chiller,
+        circuito,
+        compressor,
 
- log(
-  "Modo alterado para "+
-  (value?"AUTOMÁTICO":"MANUAL")
- );
+
+        chaveCompressor:
+            criarChaveCompressor(
+                chiller,
+                circuito,
+                compressor
+            ),
+
+
+        modo:
+            $("modo").value,
+
+        bomba:
+            $("bomba").value,
+
+        alarme:
+            $("alarme").value,
+
+        descricaoAlarme:
+            $("descricaoAlarme")
+            .value
+            .trim(),
+
+
+        corrente:
+            lerNumero("corrente"),
+
+        tensao:
+            lerNumero("tensao"),
+
+        ambiente:
+            lerNumero("ambiente"),
+
+        aguaEvap:
+            lerNumero("aguaEvap"),
+
+        setpoint:
+            lerNumero("setpoint"),
+
+
+        condSaturada:
+            lerNumero("condSaturada"),
+
+        sucSaturada:
+            lerNumero("sucSaturada"),
+
+        gasSucao:
+            lerNumero("gasSucao"),
+
+
+        pressaoSucao:
+            lerNumero("pressaoSucao"),
+
+        pressaoDescarga:
+            lerNumero("pressaoDescarga"),
+
+
+        /* VALOR EXATO DA IHM */
+        superaquecimento:
+            lerNumero("superaquecimento"),
+
+
+        subresfriamento:
+            lerNumero("subresfriamento"),
+
+
+        horas:
+            lerNumero("horas"),
+
+        partidas:
+            lerNumero("partidas"),
+
+
+        observacoes:
+            $("observacoes")
+            .value
+            .trim()
+
+    };
+
+
+    const banco =
+        carregarBanco();
+
+
+    const historico =
+        banco
+
+        .filter(r =>
+            r.chaveCompressor ===
+            novo.chaveCompressor
+        )
+
+        .sort((a,b)=>
+            new Date(b.timestamp) -
+            new Date(a.timestamp)
+        );
+
+
+    const analise =
+        analisarRegistro(
+            novo,
+            historico
+        );
+
+
+    novo.analise =
+        analise;
+
+
+    banco.push(novo);
+
+    salvarBanco(banco);
+
+
+    mostrarAnalise(novo);
+
+    atualizarStatus();
+
+    limparCampos();
+
+
+    alert(
+        "Medição registrada.\n\n"
+        +"Resultado: "
+        +analise.status
+    );
 
 }
 
 
-/* =========================================================
-   CHILLER INDIVIDUAL
-========================================================= */
+/* =====================================================
+   MOSTRAR ANÁLISE
+===================================================== */
 
-function toggleChiller(number){
+function mostrarAnalise(registro){
 
- if(state.auto){
+    if(!registro){
 
-  log(
-   `C${String(number).padStart(2,"0")} — comando manual executado para teste`
-  );
-
- }
-
- const index=number-1;
-
- state.chillers[index]=
-  !state.chillers[index];
-
- log(
-  `Chiller ${String(number).padStart(2,"0")} `+
-  (
-   state.chillers[index]?
-   "LIGADO":
-   "DESLIGADO"
-  )
- );
-
- updateAll();
-
-}
+        $("analysisBox").className =
+            "analysis normal";
 
 
-/* =========================================================
-   BOMBA SECUNDÁRIA
-========================================================= */
-
-function toggleSecondary(number){
-
- const index=number-1;
-
- state.secondary[index]=
-  !state.secondary[index];
-
- log(
-  `BAGSS${String(number).padStart(2,"0")} `+
-  (
-   state.secondary[index]?
-   "LIGADA":
-   "DESLIGADA"
-  )
- );
-
- updateAll();
-
-}
+        $("analysisBadge").textContent =
+            "NORMAL";
 
 
-/* =========================================================
-   TODOS OS CHILLERS
-========================================================= */
-
-function setAllChillers(value){
-
- state.chillers=[
-  value,
-  value,
-  value,
-  value
- ];
-
- log(
-  value?
-  "Comando: TODOS OS CHILLERS LIGADOS":
-  "Comando: TODOS OS CHILLERS DESLIGADOS"
- );
-
- updateAll();
-
-}
+        $("analysisBadge").className =
+            "badge badge-normal";
 
 
-/* =========================================================
-   RECONHECER ALARMES
-========================================================= */
-
-function ackAlarms(){
-
- if(state.alarms.length){
-
-  log(
-   "Alarmes reconhecidos pelo operador."
-  );
-
- }else{
-
-  log(
-   "Reconhecimento solicitado — nenhum alarme ativo."
-  );
-
- }
-
-}
+        $("analysisText").textContent =
+            "Nenhuma medição registrada.";
 
 
-/* =========================================================
-   TESTE NET
-========================================================= */
-
-function testNet(){
-
- log(
-  "NET — comunicação simulada OK."
- );
-
-}
+        $("analysisMessages")
+            .innerHTML = "";
 
 
-/* =========================================================
-   MANUAL
-========================================================= */
+        $("metricCorrente")
+            .textContent = "---";
 
-function showManual(){
+        $("metricAmbiente")
+            .textContent = "---";
 
- alert(
-`CAG PRO — SIMULADOR
+        $("metricSucao")
+            .textContent = "---";
 
-SEQUÊNCIA DO CIRCUITO:
+        $("metricDescarga")
+            .textContent = "---";
 
-Tanque de expansão
-        ↓
-Bombas BAGP
-        ↓
-Chillers
-        ↓
-Retorno hidráulico
-        ↓
-Bombas BAGSS
-        ↓
-Circuito secundário
+        $("metricSH")
+            .textContent = "---";
 
-AUTOMÁTICO:
-O simulador calcula temperatura,
-vazão, pressão e alarmes.
+        return;
 
-MANUAL:
-Os equipamentos podem ser ligados
-e desligados individualmente.
+    }
 
-ALARMES:
-• Falta de fluxo
-• Chiller sem secundária
-• Secundária sem chiller
-• Vazão insuficiente
-• Temperatura elevada
-• Pressão baixa
 
-Este sistema é apenas um
-SIMULADOR DIDÁTICO.
+    const status =
+        registro.analise?.status ||
+        "NORMAL";
 
-Nenhum equipamento real é comandado.`
- );
+
+    const box =
+        $("analysisBox");
+
+
+    box.className =
+        "analysis "
+        +(
+            status==="CRÍTICO"
+            ?"critical"
+            :
+            status==="ATENÇÃO"
+            ?"attention"
+            :
+            "normal"
+        );
+
+
+    $("analysisBadge")
+        .textContent =
+        status;
+
+
+    $("analysisBadge")
+        .className =
+        "badge "
+        +(
+            status==="CRÍTICO"
+            ?"badge-critical"
+            :
+            status==="ATENÇÃO"
+            ?"badge-attention"
+            :
+            "badge-normal"
+        );
+
+
+    $("analysisText")
+        .innerHTML =
+        "<b>Resultado:</b> "
+        +escapeHTML(status)
+        +"<br>"
+        +"Nível de alerta: "
+        +(registro.analise?.nivel ?? 0);
+
+
+    $("analysisMessages")
+        .innerHTML =
+        (registro.analise?.mensagens || [])
+        .map(
+            m=>"<li>"
+            +escapeHTML(m)
+            +"</li>"
+        )
+        .join("");
+
+
+    $("metricCorrente")
+        .textContent =
+        fmt(registro.corrente)
+        +" A";
+
+
+    $("metricAmbiente")
+        .textContent =
+        fmt(registro.ambiente)
+        +" °C";
+
+
+    $("metricSucao")
+        .textContent =
+        fmt(registro.pressaoSucao)
+        +" kPa";
+
+
+    $("metricDescarga")
+        .textContent =
+        fmt(registro.pressaoDescarga)
+        +" kPa";
+
+
+    $("metricSH")
+        .textContent =
+        fmt(registro.superaquecimento)
+        +" °C";
 
 }
 
 
-/* =========================================================
-   CICLO PRINCIPAL
-========================================================= */
+/* =====================================================
+   ESTATÍSTICAS
+===================================================== */
 
-function updateAll(){
+function estatisticas(hist){
 
- /*
-  Primeiro calculamos a hidráulica.
- */
+    const campos = [
 
- state.flow=
-  calculateFlow();
+        "corrente",
+        "ambiente",
+        "pressaoSucao",
+        "pressaoDescarga",
+        "condSaturada",
+        "sucSaturada",
+        "gasSucao",
+        "superaquecimento"
 
- /*
-  Depois temperatura.
- */
+    ];
 
- updateTemperature();
 
- /*
-  Pressão.
- */
+    const result = {};
 
- updatePressure();
 
- /*
-  Alarmes.
- */
+    campos.forEach(campo=>{
 
- state.alarms=
-  calculateAlarms();
+        const valores =
+            hist
 
- /*
-  Interface.
- */
+            .map(r=>r[campo])
 
- updatePrimaryPumps();
+            .filter(v=>
+                Number.isFinite(v)
+            );
 
- updateSecondaryPumps();
 
- updateChillers();
+        if(!valores.length){
 
- updatePipes();
+            result[campo] = {
 
- updateSummary();
+                media:null,
+                min:null,
+                max:null
 
- updateAlarmPanel();
+            };
 
- registerNewAlarms();
+            return;
+
+        }
+
+
+        const soma =
+            valores.reduce(
+                (a,b)=>a+b,
+                0
+            );
+
+
+        result[campo] = {
+
+            media:
+                soma/valores.length,
+
+            min:
+                Math.min(...valores),
+
+            max:
+                Math.max(...valores)
+
+        };
+
+    });
+
+
+    return result;
 
 }
 
 
-/* =========================================================
-   CICLO DE SIMULAÇÃO
-========================================================= */
+/* =====================================================
+   TENDÊNCIA
+===================================================== */
 
-setInterval(()=>{
+function tendencia(hist,campo){
 
- state.tick++;
+    if(hist.length<2){
 
- /*
-  Horímetro:
-  1 segundo real = 1/3600 hora
- */
+        return "SEM REFERÊNCIA";
 
- state.chillers.forEach(
-  (running,index)=>{
-
-   if(running){
-
-    state.hours[index]+=
-     1/3600;
-
-   }
-
-  }
- );
-
- /*
-  Pequena variação dinâmica.
- */
-
- const variation=
-  Math.sin(state.tick/10)*0.03;
-
- state.pressure+=variation;
-
- /*
-  No automático:
-  se nenhum chiller estiver ligado,
-  o sistema liga automaticamente os
-  dois chillers de menor carga.
-
-  Isso deixa o simulador realmente
-  automático.
- */
-
- if(state.auto){
-
-  const anyChiller=
-   state.chillers.some(Boolean);
-
-  if(!anyChiller){
-
-   state.chillers[1]=true;
-
-   state.chillers[2]=true;
-
-   log(
-    "AUTOMÁTICO — demanda detectada: C02 e C03 acionados."
-   );
-
-  }
-
- }
-
- updateAll();
-
-},1000);
+    }
 
 
-/* =========================================================
+    const atual =
+        hist[0][campo];
+
+    const anterior =
+        hist[1][campo];
+
+
+    if(
+        !Number.isFinite(atual) ||
+        !Number.isFinite(anterior)
+    ){
+
+        return "SEM DADO";
+
+    }
+
+
+    if(atual>anterior){
+
+        return "↑ SUBINDO";
+
+    }
+
+
+    if(atual<anterior){
+
+        return "↓ DESCENDO";
+
+    }
+
+
+    return "→ ESTÁVEL";
+
+}
+
+
+/* =====================================================
+   MEMÓRIA TÉCNICA
+===================================================== */
+
+function renderizarMemoriaTecnica(){
+
+    const hist =
+        obterHistoricoCompressor();
+
+
+    $("memCount")
+        .textContent =
+        hist.length;
+
+
+    $("memCorrente")
+        .textContent =
+        tendencia(
+            hist,
+            "corrente"
+        );
+
+
+    $("memSucao")
+        .textContent =
+        tendencia(
+            hist,
+            "pressaoSucao"
+        );
+
+
+    $("memDescarga")
+        .textContent =
+        tendencia(
+            hist,
+            "pressaoDescarga"
+        );
+
+
+    const est =
+        estatisticas(hist);
+
+
+    $("avgCorrente")
+        .textContent =
+        fmt(est.corrente.media)
+        +" A";
+
+
+    $("avgAmbiente")
+        .textContent =
+        fmt(est.ambiente.media)
+        +" °C";
+
+
+    $("avgSucao")
+        .textContent =
+        fmt(est.pressaoSucao.media)
+        +" kPa";
+
+
+    $("avgDescarga")
+        .textContent =
+        fmt(est.pressaoDescarga.media)
+        +" kPa";
+
+}
+
+
+/* =====================================================
+   HISTÓRICO
+===================================================== */
+
+function renderizarHistorico(){
+
+    const hist =
+        obterHistoricoCompressor();
+
+
+    const filtro =
+        $("filtroStatus").value;
+
+
+    const qtd =
+        Number(
+            $("filtroQtd").value
+        );
+
+
+    let lista =
+        hist.filter(r=>
+            !filtro ||
+            r.analise?.status === filtro
+        );
+
+
+    lista =
+        lista.slice(0,qtd);
+
+
+    $("historicoBody")
+        .innerHTML =
+
+        lista.map(r=>{
+
+            const status =
+                r.analise?.status ||
+                "NORMAL";
+
+
+            const classe =
+                status==="CRÍTICO"
+                ?"critical-text"
+                :
+                status==="ATENÇÃO"
+                ?"attention-text"
+                :
+                "normal-text";
+
+
+            return `
+
+                <tr>
+
+                    <td>
+                        ${escapeHTML(r.data)}
+                        ${escapeHTML(r.hora)}
+                    </td>
+
+                    <td class="${classe}">
+                        ${escapeHTML(status)}
+                    </td>
+
+                    <td>
+                        ${fmt(r.corrente)} A
+                    </td>
+
+                    <td>
+                        ${fmt(r.tensao)} V
+                    </td>
+
+                    <td>
+                        ${fmt(r.pressaoSucao)} kPa
+                    </td>
+
+                    <td>
+                        ${fmt(r.pressaoDescarga)} kPa
+                    </td>
+
+                    <td>
+                        ${fmt(r.condSaturada)} °C
+                    </td>
+
+                    <td>
+                        ${fmt(r.sucSaturada)} °C
+                    </td>
+
+                    <td>
+                        ${fmt(r.gasSucao)} °C
+                    </td>
+
+                    <td>
+                        ${fmt(r.superaquecimento)} °C
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            r.alarme || "---"
+                        )}
+                    </td>
+
+                </tr>
+
+            `;
+
+        })
+
+        .join("");
+
+}
+
+
+/* =====================================================
+   COMPARATIVO
+===================================================== */
+
+function renderizarComparativo(){
+
+    const circuito =
+        $("circuito").value;
+
+
+    const compressor =
+        $("compressor").value;
+
+
+    const banco =
+        carregarBanco();
+
+
+    $("comparativo")
+        .innerHTML =
+
+        CHILLERS.map(chiller=>{
+
+            const chave =
+                criarChaveCompressor(
+                    chiller,
+                    circuito,
+                    compressor
+                );
+
+
+            const hist =
+                banco
+
+                .filter(r=>
+                    r.chaveCompressor === chave
+                )
+
+                .sort((a,b)=>
+                    new Date(b.timestamp) -
+                    new Date(a.timestamp)
+                );
+
+
+            const r =
+                hist[0];
+
+
+            if(!r){
+
+                return `
+
+                    <div class="compare-card">
+
+                        <h4>
+                            ${escapeHTML(chiller)}
+                        </h4>
+
+                        <span class="note">
+                            Sem dados registrados.
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            return `
+
+                <div class="compare-card">
+
+                    <h4>
+                        ${escapeHTML(chiller)}
+                    </h4>
+
+                    <div>
+                        Corrente:
+                        <b>
+                            ${fmt(r.corrente)} A
+                        </b>
+                    </div>
+
+                    <div>
+                        Sucção:
+                        <b>
+                            ${fmt(r.pressaoSucao)} kPa
+                        </b>
+                    </div>
+
+                    <div>
+                        Descarga:
+                        <b>
+                            ${fmt(r.pressaoDescarga)} kPa
+                        </b>
+                    </div>
+
+                    <div>
+                        SH IHM:
+                        <b>
+                            ${fmt(r.superaquecimento)} °C
+                        </b>
+                    </div>
+
+                    <div>
+                        Status:
+                        <b>
+                            ${escapeHTML(
+                                r.analise?.status ||
+                                "NORMAL"
+                            )}
+                        </b>
+                    </div>
+
+                </div>
+
+            `;
+
+        })
+
+        .join("");
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function atualizarStatus(){
+
+    const hist =
+        obterHistoricoCompressor();
+
+
+    const ultimo =
+        hist[0];
+
+
+    $("statusChiller")
+        .textContent =
+        $("chiller").value;
+
+
+    $("statusCircuito")
+        .textContent =
+        $("circuito").value;
+
+
+    $("statusCompressor")
+        .textContent =
+        $("compressor").value;
+
+
+    $("statusHistorico")
+        .textContent =
+        hist.length
+        +" registros";
+
+
+    $("statusUltima")
+        .textContent =
+        ultimo
+        ?ultimo.data+" "+ultimo.hora
+        :"---";
+
+
+    if(ultimo){
+
+        mostrarAnalise(ultimo);
+
+    }else{
+
+        mostrarAnalise(null);
+
+    }
+
+
+    renderizarMemoriaTecnica();
+
+    renderizarHistorico();
+
+    renderizarComparativo();
+
+}
+
+
+/* =====================================================
+   COMPRESSORES
+===================================================== */
+
+function carregarCompressores(){
+
+    const circuito =
+        $("circuito").value;
+
+
+    const select =
+        $("compressor");
+
+
+    const anterior =
+        select.value;
+
+
+    select.innerHTML =
+        COMPRESSORES[circuito]
+
+        .map(c=>
+            `<option value="${c}">
+                ${c}
+            </option>`
+        )
+
+        .join("");
+
+
+    if(
+        COMPRESSORES[circuito]
+        .includes(anterior)
+    ){
+
+        select.value =
+            anterior;
+
+    }else{
+
+        select.value =
+            COMPRESSORES[circuito][0];
+
+    }
+
+
+    atualizarBotoesCompressores();
+
+}
+
+
+/* =====================================================
+   BOTÕES DOS COMPRESSORES
+===================================================== */
+
+function atualizarBotoesCompressores(){
+
+    document
+        .querySelectorAll(".comp")
+        .forEach(el=>{
+
+            el.classList.toggle(
+
+                "active",
+
+                el.dataset.circuit ===
+                $("circuito").value
+
+                &&
+
+                el.dataset.comp ===
+                $("compressor").value
+
+            );
+
+        });
+
+}
+
+
+/* =====================================================
+   CONSULTAR HISTÓRICO
+===================================================== */
+
+function consultarHistorico(){
+
+    atualizarStatus();
+
+
+    document
+        .querySelector(".right")
+        .scrollIntoView({
+
+            behavior:"smooth",
+
+            block:"start"
+
+        });
+
+}
+
+
+/* =====================================================
+   LIMPAR CAMPOS
+===================================================== */
+
+function limparCampos(){
+
+    [
+
+        "corrente",
+        "tensao",
+        "ambiente",
+        "aguaEvap",
+        "setpoint",
+        "condSaturada",
+        "sucSaturada",
+        "gasSucao",
+        "pressaoSucao",
+        "pressaoDescarga",
+        "superaquecimento",
+        "subresfriamento",
+        "horas",
+        "partidas",
+        "descricaoAlarme",
+        "observacoes"
+
+    ].forEach(id=>{
+
+        $(id).value = "";
+
+    });
+
+
+    $("alarme").value =
+        "NÃO";
+
+
+    $("bomba").value =
+        "DESLIGADA";
+
+}
+
+
+/* =====================================================
+   EXPORTAR
+===================================================== */
+
+function exportarDados(){
+
+    const dados =
+        carregarBanco();
+
+
+    const blob =
+        new Blob(
+
+            [
+                JSON.stringify(
+                    dados,
+                    null,
+                    2
+                )
+            ],
+
+            {
+                type:"application/json"
+            }
+
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const a =
+        document.createElement("a");
+
+
+    a.href =
+        url;
+
+
+    a.download =
+        "chiller_analyzer_historico_"
+        +new Date()
+            .toISOString()
+            .slice(0,10)
+        +".json";
+
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+
+    setTimeout(
+        ()=>URL.revokeObjectURL(url),
+        500
+    );
+
+}
+
+
+/* =====================================================
+   IMPORTAR
+===================================================== */
+
+function importarDados(){
+
+    const arquivo =
+        $("arquivoImportacao")
+        .files[0];
+
+
+    if(!arquivo){
+
+        alert(
+            "Selecione um arquivo JSON."
+        );
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload=function(){
+
+        try{
+
+            const dados =
+                JSON.parse(
+                    reader.result
+                );
+
+
+            if(!Array.isArray(dados)){
+
+                throw new Error(
+                    "Formato inválido."
+                );
+
+            }
+
+
+            salvarBanco(dados);
+
+            atualizarStatus();
+
+
+            alert(
+                "Histórico importado com sucesso."
+            );
+
+
+        }catch(e){
+
+            alert(
+                "Erro ao importar: "
+                +e.message
+            );
+
+        }
+
+    };
+
+
+    reader.readAsText(arquivo);
+
+}
+
+
+/* =====================================================
+   LIMPAR BANCO
+===================================================== */
+
+function limparBanco(){
+
+    if(!confirm(
+        "Tem certeza que deseja apagar TODO o histórico local?"
+    )){
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        STORAGE_KEY
+    );
+
+
+    atualizarStatus();
+
+
+    alert(
+        "Banco local apagado."
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(valor){
+
+    return String(
+        valor ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   IMPRESSÃO — RELATÓRIO TÉCNICO
+===================================================== */
+
+function imprimirResultadoAnalise(){
+
+    const chiller =
+        $("chiller").value;
+
+
+    const circuito =
+        $("circuito").value;
+
+
+    const compressor =
+        $("compressor").value;
+
+
+    const historico =
+        obterHistoricoCompressor();
+
+
+    if(!historico.length){
+
+        alert(
+
+            "Não existe nenhuma medição para\n\n"
+
+            +chiller
+            +" / Circuito "
+            +circuito
+            +" / Compressor "
+            +compressor
+
+        );
+
+        return;
+
+    }
+
+
+    /* ÚLTIMO REGISTRO */
+
+    const r =
+        historico[0];
+
+
+    const analise =
+        r.analise || {
+
+            status:"NORMAL",
+
+            nivel:0,
+
+            mensagens:[],
+
+            indicadores:{}
+
+        };
+
+
+    const est =
+        estatisticas(historico);
+
+
+    const dataGeracao =
+        new Date();
+
+
+    /* INDICADORES */
+
+    const diferencaGas =
+        diferenca(
+            r.gasSucao,
+            r.sucSaturada
+        );
+
+
+    const diferencialCond =
+        diferenca(
+            r.condSaturada,
+            r.ambiente
+        );
+
+
+    const statusClasse =
+        analise.status === "CRÍTICO"
+        ?"critical"
+        :
+        analise.status === "ATENÇÃO"
+        ?"attention"
+        :
+        "normal";
+
+
+    /* LINHA DE TABELA */
+
+    function linha(
+        nome,
+        valor
+    ){
+
+        return `
+
+            <tr>
+
+                <td>
+                    <b>
+                        ${escapeHTML(nome)}
+                    </b>
+                </td>
+
+                <td>
+                    ${escapeHTML(valor)}
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    /* MENSAGENS */
+
+    const mensagens =
+        (
+            Array.isArray(
+                analise.mensagens
+            )
+            ?
+            analise.mensagens
+            :
+            []
+        )
+
+        .map(
+            m=>
+                `<li>
+                    ${escapeHTML(m)}
+                </li>`
+        )
+
+        .join("");
+
+
+    /* ÚLTIMOS REGISTROS */
+
+    const ultimos =
+        historico
+
+        .slice(0,10)
+
+        .map(x=>`
+
+            <tr>
+
+                <td>
+                    ${escapeHTML(x.data)}
+                </td>
+
+                <td>
+                    ${escapeHTML(x.hora)}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        x.analise?.status ||
+                        "NORMAL"
+                    )}
+                </td>
+
+                <td>
+                    ${fmt(x.corrente)} A
+                </td>
+
+                <td>
+                    ${fmt(x.pressaoSucao)} kPa
+                </td>
+
+                <td>
+                    ${fmt(x.pressaoDescarga)} kPa
+                </td>
+
+                <td>
+                    ${fmt(x.superaquecimento)} °C
+                </td>
+
+            </tr>
+
+        `)
+
+        .join("");
+
+
+    /* =================================================
+       RELATÓRIO
+    ================================================= */
+
+    const relatorio = `
+
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+CHILLER ANALYZER PRO — Relatório
+</title>
+
+
+<style>
+
+@page{
+
+    size:A4;
+
+    margin:12mm;
+
+}
+
+
+*{
+
+    box-sizing:border-box;
+
+}
+
+
+body{
+
+    margin:0;
+
+    background:#fff;
+
+    color:#111;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:11px;
+
+    line-height:1.4;
+
+}
+
+
+h1{
+
+    text-align:center;
+
+    font-size:20px;
+
+    margin:0;
+
+}
+
+
+h2{
+
+    font-size:14px;
+
+    margin-top:18px;
+
+    padding-bottom:5px;
+
+    border-bottom:1px solid #333;
+
+}
+
+
+.subtitulo{
+
+    text-align:center;
+
+    font-size:11px;
+
+    margin-top:4px;
+
+}
+
+
+.box{
+
+    border:1px solid #777;
+
+    padding:8px;
+
+    margin-top:8px;
+
+    page-break-inside:avoid;
+
+}
+
+
+.grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:8px;
+
+}
+
+
+.item{
+
+    padding:3px;
+
+}
+
+
+.status{
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    margin-bottom:8px;
+
+}
+
+
+.normal{
+
+    color:#087d52;
+
+}
+
+
+.attention{
+
+    color:#9a7300;
+
+}
+
+
+.critical{
+
+    color:#c52232;
+
+}
+
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:7px;
+
+}
+
+
+th,
+td{
+
+    border:1px solid #777;
+
+    padding:5px;
+
+    font-size:9px;
+
+    text-align:left;
+
+}
+
+
+th{
+
+    background:#eee;
+
+}
+
+
+ul{
+
+    margin-top:7px;
+
+}
+
+
+li{
+
+    margin-bottom:4px;
+
+}
+
+
+.nota{
+
+    font-size:9px;
+
+    line-height:1.5;
+
+}
+
+
+.assinaturas{
+
+    margin-top:55px;
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:60px;
+
+}
+
+
+.assinatura{
+
+    border-top:1px solid #222;
+
+    text-align:center;
+
+    padding-top:5px;
+
+    font-size:10px;
+
+}
+
+
+.rodape{
+
+    margin-top:25px;
+
+    text-align:center;
+
+    font-size:8px;
+
+    color:#555;
+
+}
+
+
+.page-break{
+
+    page-break-before:always;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>
+CHILLER ANALYZER PRO
+</h1>
+
+
+<div class="subtitulo">
+
+RELATÓRIO TÉCNICO DE ANÁLISE
+
+</div>
+
+
+<div class="box">
+
+<div class="grid">
+
+
+<div class="item">
+
+<b>Chiller</b><br>
+
+${escapeHTML(chiller)}
+
+</div>
+
+
+<div class="item">
+
+<b>Circuito</b><br>
+
+${escapeHTML(circuito)}
+
+</div>
+
+
+<div class="item">
+
+<b>Compressor</b><br>
+
+${escapeHTML(compressor)}
+
+</div>
+
+
+<div class="item">
+
+<b>Data da medição</b><br>
+
+${escapeHTML(r.data)}
+&nbsp;
+${escapeHTML(r.hora)}
+
+</div>
+
+
+<div class="item">
+
+<b>Relatório gerado</b><br>
+
+${escapeHTML(
+    dataGeracao.toLocaleString("pt-BR")
+)}
+
+</div>
+
+
+<div class="item">
+
+<b>Registros históricos</b><br>
+
+${historico.length}
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<h2>
+1. RESULTADO DA ANÁLISE
+</h2>
+
+
+<div class="box">
+
+
+<div class="status ${statusClasse}">
+
+${escapeHTML(
+    analise.status
+)}
+
+</div>
+
+
+<div>
+
+<b>Nível de alerta:</b>
+
+${analise.nivel ?? 0}
+
+</div>
+
+
+<ul>
+
+${mensagens || `
+<li>
+Nenhuma mensagem de diagnóstico registrada.
+</li>
+`}
+
+</ul>
+
+
+</div>
+
+
+<h2>
+2. IDENTIFICAÇÃO E ESTADO DA IHM
+</h2>
+
+
+<table>
+
+<tbody>
+
+${linha(
+    "Modo de operação",
+    r.modo
+)}
+
+${linha(
+    "Bomba evaporador",
+    r.bomba
+)}
+
+${linha(
+    "Alarme",
+    r.alarme
+)}
+
+${linha(
+    "Descrição do alarme",
+    r.descricaoAlarme || "---"
+)}
+
+</tbody>
+
+</table>
+
+
+<h2>
+3. TEMPERATURAS
+</h2>
+
+
+<table>
+
+<tbody>
+
+${linha(
+    "Temperatura ambiente",
+    fmt(r.ambiente)+" °C"
+)}
+
+${linha(
+    "Água evaporador",
+    fmt(r.aguaEvap)+" °C"
+)}
+
+${linha(
+    "Setpoint",
+    fmt(r.setpoint)+" °C"
+)}
+
+${linha(
+    "Temperatura condensação saturada",
+    fmt(r.condSaturada)+" °C"
+)}
+
+${linha(
+    "Temperatura sucção saturada",
+    fmt(r.sucSaturada)+" °C"
+)}
+
+${linha(
+    "Temperatura gás de sucção",
+    fmt(r.gasSucao)+" °C"
+)}
+
+</tbody>
+
+</table>
+
+
+<h2>
+4. PRESSÕES
+</h2>
+
+
+<table>
+
+<tbody>
+
+${linha(
+    "Pressão de sucção",
+    fmt(r.pressaoSucao)+" kPa"
+)}
+
+${linha(
+    "Pressão de descarga",
+    fmt(r.pressaoDescarga)+" kPa"
+)}
+
+</tbody>
+
+</table>
+
+
+<h2>
+5. TERMODINÂMICA
+</h2>
+
+
+<table>
+
+<tbody>
+
+${linha(
+    "Superaquecimento — valor IHM",
+    fmt(r.superaquecimento)+" °C"
+)}
+
+${linha(
+    "Sub-resfriamento — valor IHM",
+    fmt(r.subresfriamento)+" °C"
+)}
+
+${linha(
+    "Gás de sucção − sucção saturada",
+    fmt(diferencaGas)+" °C"
+)}
+
+${linha(
+    "Condensação saturada − ambiente",
+    fmt(diferencialCond)+" °C"
+)}
+
+</tbody>
+
+</table>
+
+
+<div class="box nota">
+
+<b>NOTA TÉCNICA</b>
+
+<br><br>
+
+O superaquecimento apresentado neste relatório
+corresponde diretamente ao valor informado pela IHM
+no momento da medição e não é recalculado pelo sistema.
+
+<br><br>
+
+A diferença entre a temperatura do gás de sucção
+e a temperatura de sucção saturada é apresentada
+somente como indicador auxiliar.
+
+<br><br>
+
+As pressões são apresentadas em kPa.
+
+</div>
+
+
+<h2>
+6. DADOS ELÉTRICOS
+</h2>
+
+
+<table>
+
+<tbody>
+
+${linha(
+    "Corrente",
+    fmt(r.corrente)+" A"
+)}
+
+${linha(
+    "Tensão",
+    fmt(r.tensao)+" V"
+)}
+
+</tbody>
+
+</table>
+
+
+<h2>
+7. REGISTRO OPERACIONAL
+</h2>
+
+
+<table>
+
+<tbody>
+
+${linha(
+    "Horas do compressor",
+    fmt(r.horas)+" h"
+)}
+
+${linha(
+    "Partidas",
+    fmt(r.partidas,0)
+)}
+
+</tbody>
+
+</table>
+
+
+<h2>
+8. MEMÓRIA TÉCNICA
+</h2>
+
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Grandeza</th>
+
+<th>Média</th>
+
+<th>Mínimo</th>
+
+<th>Máximo</th>
+
+<th>Tendência</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+
+<tr>
+
+<td>Corrente</td>
+
+<td>
+${fmt(est.corrente.media)} A
+</td>
+
+<td>
+${fmt(est.corrente.min)} A
+</td>
+
+<td>
+${fmt(est.corrente.max)} A
+</td>
+
+<td>
+${tendencia(
+    historico,
+    "corrente"
+)}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Ambiente</td>
+
+<td>
+${fmt(est.ambiente.media)} °C
+</td>
+
+<td>
+${fmt(est.ambiente.min)} °C
+</td>
+
+<td>
+${fmt(est.ambiente.max)} °C
+</td>
+
+<td>
+${tendencia(
+    historico,
+    "ambiente"
+)}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Pressão sucção</td>
+
+<td>
+${fmt(est.pressaoSucao.media)} kPa
+</td>
+
+<td>
+${fmt(est.pressaoSucao.min)} kPa
+</td>
+
+<td>
+${fmt(est.pressaoSucao.max)} kPa
+</td>
+
+<td>
+${tendencia(
+    historico,
+    "pressaoSucao"
+)}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Pressão descarga</td>
+
+<td>
+${fmt(est.pressaoDescarga.media)} kPa
+</td>
+
+<td>
+${fmt(est.pressaoDescarga.min)} kPa
+</td>
+
+<td>
+${fmt(est.pressaoDescarga.max)} kPa
+</td>
+
+<td>
+${tendencia(
+    historico,
+    "pressaoDescarga"
+)}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Condensação saturada</td>
+
+<td>
+${fmt(est.condSaturada.media)} °C
+</td>
+
+<td>
+${fmt(est.condSaturada.min)} °C
+</td>
+
+<td>
+${fmt(est.condSaturada.max)} °C
+</td>
+
+<td>
+${tendencia(
+    historico,
+    "condSaturada"
+)}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Sucção saturada</td>
+
+<td>
+${fmt(est.sucSaturada.media)} °C
+</td>
+
+<td>
+${fmt(est.sucSaturada.min)} °C
+</td>
+
+<td>
+${fmt(est.sucSaturada.max)} °C
+</td>
+
+<td>
+${tendencia(
+    historico,
+    "sucSaturada"
+)}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Gás sucção</td>
+
+<td>
+${fmt(est.gasSucao.media)} °C
+</td>
+
+<td>
+${fmt(est.gasSucao.min)} °C
+</td>
+
+<td>
+${fmt(est.gasSucao.max)} °C
+</td>
+
+<td>
+${tendencia(
+    historico,
+    "gasSucao"
+)}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Superaquecimento IHM</td>
+
+<td>
+${fmt(est.superaquecimento.media)} °C
+</td>
+
+<td>
+${fmt(est.superaquecimento.min)} °C
+</td>
+
+<td>
+${fmt(est.superaquecimento.max)} °C
+</td>
+
+<td>
+${tendencia(
+    historico,
+    "superaquecimento"
+)}
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
+
+
+<h2>
+9. ÚLTIMOS REGISTROS
+</h2>
+
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Data</th>
+<th>Hora</th>
+<th>Status</th>
+<th>Corrente</th>
+<th>Sucção</th>
+<th>Descarga</th>
+<th>SH IHM</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+${ultimos}
+
+</tbody>
+
+</table>
+
+
+<h2>
+10. OBSERVAÇÕES TÉCNICAS
+</h2>
+
+
+<div class="box">
+
+${escapeHTML(
+    r.observacoes ||
+    "Nenhuma observação registrada."
+)}
+
+</div>
+
+
+<div class="assinaturas">
+
+
+<div class="assinatura">
+
+Técnico responsável
+
+</div>
+
+
+<div class="assinatura">
+
+Responsável pela inspeção
+
+</div>
+
+
+</div>
+
+
+<div class="rodape">
+
+CHILLER ANALYZER PRO<br>
+
+Relatório gerado a partir dos dados
+registrados no histórico técnico do sistema.
+
+</div>
+
+
+</body>
+
+</html>
+
+`;
+
+
+    /* =================================================
+       ABRIR JANELA DE IMPRESSÃO
+    ================================================= */
+
+    const janela =
+        window.open(
+            "",
+            "_blank",
+            "width=1000,height=800"
+        );
+
+
+    if(!janela){
+
+        alert(
+            "O navegador bloqueou a janela de impressão. "
+            +"Permita pop-ups para este sistema."
+        );
+
+        return;
+
+    }
+
+
+    janela.document.open();
+
+    janela.document.write(
+        relatorio
+    );
+
+    janela.document.close();
+
+
+    janela.onload=function(){
+
+        janela.focus();
+
+        setTimeout(
+            function(){
+
+                janela.print();
+
+            },
+            400
+        );
+
+    };
+
+}
+
+
+/* =====================================================
+   EVENTOS
+===================================================== */
+
+$("chiller")
+    .addEventListener(
+        "change",
+        atualizarStatus
+    );
+
+
+$("circuito")
+    .addEventListener(
+        "change",
+        function(){
+
+            carregarCompressores();
+
+            atualizarStatus();
+
+        }
+    );
+
+
+$("compressor")
+    .addEventListener(
+        "change",
+        function(){
+
+            atualizarBotoesCompressores();
+
+            atualizarStatus();
+
+        }
+    );
+
+
+document
+    .querySelectorAll(".comp")
+    .forEach(el=>{
+
+        el.addEventListener(
+            "click",
+            function(){
+
+                $("circuito").value =
+                    this.dataset.circuit;
+
+
+                carregarCompressores();
+
+
+                $("compressor").value =
+                    this.dataset.comp;
+
+
+                atualizarBotoesCompressores();
+
+                atualizarStatus();
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
    INICIALIZAÇÃO
-========================================================= */
+===================================================== */
 
-log(
- "Sistema CAG PRO inicializado."
-);
+(function iniciar(){
 
-log(
- "C02 e C03 em operação."
-);
+    const agora =
+        new Date();
 
-log(
- "BAGP02 e BAGP03 acompanhando os chillers."
-);
 
-log(
- "BAGSS01, BAGSS02 e BAGSS04 disponíveis."
-);
+    const ano =
+        agora.getFullYear();
 
-updateAll();
+
+    const mes =
+        String(
+            agora.getMonth()+1
+        )
+        .padStart(2,"0");
+
+
+    const dia =
+        String(
+            agora.getDate()
+        )
+        .padStart(2,"0");
+
+
+    const hora =
+        String(
+            agora.getHours()
+        )
+        .padStart(2,"0");
+
+
+    const minuto =
+        String(
+            agora.getMinutes()
+        )
+        .padStart(2,"0");
+
+
+    $("data").value =
+        ano+"-"+mes+"-"+dia;
+
+
+    $("hora").value =
+        hora+":"+minuto;
+
+
+    $("chiller").value =
+        "CHILLER 01";
+
+
+    $("circuito").value =
+        "A";
+
+
+    carregarCompressores();
+
+
+    $("compressor").value =
+        "A1";
+
+
+    atualizarBotoesCompressores();
+
+
+    atualizarStatus();
+
+})();
 
 </script>
 
